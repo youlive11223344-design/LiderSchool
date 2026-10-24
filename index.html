@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lider xususiy maktabi</title>
+<script>
+try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="logo" href="#top">Lider<b>.</b></a>
+  <button id="theme" type="button" aria-label="Tun/Kun rejimi">🌙</button>
+  <button id="burger" aria-label="Menyu">☰</button>
+  <ul id="menu">
+    <li><a href="#manzil">Manzil</a></li><li><a href="#galereya">Galereya</a></li>
+    <li><a href="#kampus">Kampus</a></li><li><a href="#jamoa">Jamoa</a></li><li><a href="#video">Video</a></li>
+  </ul>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="ring"></div>
+  <div class="wrap">
+    <div>
+      <h1>Bugun o‘qigan bola, ertaga <span id="rot">yetakchi bo‘ladi</span></h1>
+      <p>Lider xususiy maktabi — chuqur bilim, kuchli xarakter va dunyoga ochiq fikrlash. Kichik sinflar, har bir o‘quvchiga alohida e’tibor.</p>
+      <div class="cta">
+        <a class="btn gold" href="#manzil">Maktabga yo‘l olish</a>
+        <a class="btn ghost" href="#kampus">Kampusni ko‘rish</a>
+      </div>
+      <div class="stats">
+        <div><b data-n="15">0</b><small>yillik tajriba</small></div>
+        <div><b data-n="12">0</b><small>o‘quvchi sinfda (o‘rtacha)</small></div>
+        <div><b data-n="98">0</b><small>% oliygohga kirish</small></div>
+      </div>
+    </div>
+    <div class="vbox">
+      <video id="heroVideo" src="" poster="" autoplay muted playsinline hidden></video>
+      <div class="ph" id="heroPh"><div><b>L</b>Maktab banneri yoki qisqa video shu yerda.<br>script.js ichida <code>HERO_VIDEO</code> ni to‘ldiring.</div></div>
+    </div>
+  </div>
+</header>
+
+<section id="manzil"><div class="wrap">
+  <h2>Bizni toping</h2>
+  <p class="lead">Tugmani bosing — telefoningizdagi xarita ilovasi hozirgi joyingizdan maktabgacha marshrutni o‘zi chizadi.</p>
+  <div class="loc">
+    <div class="card">
+      <h3>Lider xususiy maktabi</h3>
+      <p id="addr"></p>
+      <div class="btns">
+        <a class="btn gold" id="navG" target="_blank" rel="noopener">Yo‘nalishni olish (Google Maps)</a>
+        <a class="btn line" id="navY" target="_blank" rel="noopener">Yandex Maps orqali ochish</a>
+        <button class="btn line" id="navMe" type="button">Mening joyimdan masofa</button>
+      </div>
+      <div id="locmsg" role="status"></div>
+    </div>
+    <iframe id="map" title="Maktab xaritasi" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+</div></section>
+
+<section id="galereya"><div class="wrap">
+  <h2>Maktab hayoti</h2>
+  <p class="lead">Dars, tanaffus va to‘garaklardan lavhalar. Rasmni bosing — kattalashadi.</p>
+  <div class="grid" id="gal"></div>
+</div></section>
+
+<div id="lb" role="dialog" aria-modal="true"><button aria-label="Yopish">×</button><div id="lbc"></div></div>
+
+<section id="kampus"><div class="wrap">
+  <h2>Virtual kampus</h2>
+  <p class="lead">Xonani tanlang va u haqida bilib oling.</p>
+  <div class="campus">
+    <svg viewBox="0 0 600 420" role="group" aria-label="Kampus xaritasi">
+      <rect x="10" y="10" width="580" height="400" rx="16" fill="none" stroke="rgba(255,255,255,.12)" stroke-dasharray="6 6"/>
+      <g id="rooms">
+        <rect class="room" data-k="sinf" tabindex="0" x="30" y="30" width="250" height="130" rx="12"/><text class="rt" x="155" y="100">Sinfxonalar</text>
+        <rect class="room" data-k="lab" tabindex="0" x="300" y="30" width="130" height="130" rx="12"/><text class="rt" x="365" y="100">Laboratoriya</text>
+        <rect class="room" data-k="kutub" tabindex="0" x="450" y="30" width="120" height="130" rx="12"/><text class="rt" x="510" y="100">Kutubxona</text>
+        <rect class="room" data-k="zal" tabindex="0" x="30" y="250" width="250" height="140" rx="12"/><text class="rt" x="155" y="325">Sport zali</text>
+        <rect class="room" data-k="it" tabindex="0" x="300" y="250" width="130" height="140" rx="12"/><text class="rt" x="365" y="325">IT markazi</text>
+        <rect class="room" data-k="oshxona" tabindex="0" x="450" y="250" width="120" height="140" rx="12"/><text class="rt" x="510" y="325">Oshxona</text>
+      </g>
+      <text x="300" y="215" text-anchor="middle" fill="#E7C777" font-size="12" font-family="Manrope">— markaziy hovli —</text>
+    </svg>
+    <div class="info" id="info" aria-live="polite"></div>
+  </div>
+</div></section>
+
+<section id="jamoa"><div class="wrap">
+  <h2>Odamlar va loyihalar</h2>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-t="team">O‘qituvchilar</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="proj">O‘quvchi loyihalari</button>
+  </div>
+  <div class="cards" id="team"></div>
+  <div class="cards" id="proj" hidden></div>
+</div></section>
+
+<section id="video"><div class="wrap">
+  <h2>Video-taqdimotlar</h2>
+  <p class="lead">Maktab haqida 1–2 daqiqalik videolar.</p>
+  <div class="vids" id="vids"></div>
+</div></section>
+
+<footer><div class="wrap"><b>Lider xususiy maktabi</b><p>© <span id="yr"></span> · Barcha huquqlar himoyalangan</p></div></footer>
+
+<script src="script.js"></script>
+</body>
+</html>
