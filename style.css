@@ -142,4 +142,23 @@ nav ul a{color:#dbe4ff;text-decoration:none;font-size:.92rem}nav ul a:hover{colo
 
 footer{background:var(--navy);color:#b9c8f0;padding:48px 0;text-align:center;font-size:.9rem}
 footer b{color:var(--gold2);font-family:var(--serif);font-size:1.4rem}
+
+/* LOGIN / KIRISH QISMI (yangi) */
+nav ul #authLi,nav ul #authLi a{color:#dbe4ff;font-size:.92rem}
+nav ul #authLi a:hover{color:var(--gold2)}
+.panel{margin-bottom:28px}
+.panel .note{color:var(--mute);font-size:.95rem}
+.panel .note a{color:var(--accent);font-weight:700}
+.pf{display:grid;gap:12px;max-width:560px;background:var(--card);border:1px solid var(--border);border-left:6px solid var(--gold);border-radius:20px;padding:24px}
+.pf h3{color:var(--head);font-size:1.3rem}
+.pf input,.pf textarea,.pf select{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font:500 .95rem var(--sans)}
+.pf textarea{min-height:90px;resize:vertical}
+.pf input:focus,.pf textarea:focus,.pf select:focus{outline:none;border-color:var(--gold)}
+.pf .btn{justify-self:start}
+.act{display:flex;gap:8px;margin-top:14px}
+.mini{padding:6px 14px;border-radius:999px;border:1.5px solid var(--head);background:transparent;color:var(--head);font:700 .8rem var(--sans);cursor:pointer}
+.mini:hover{border-color:var(--gold)}
+.mini.del{border-color:#d64545;color:#d64545}
+@media(max-width:820px){nav ul #authLi{padding:4px 0}}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

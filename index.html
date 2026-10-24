@@ -20,6 +20,7 @@ try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark
   <ul id="menu">
     <li><a href="#manzil">Manzil</a></li><li><a href="#galereya">Galereya</a></li>
     <li><a href="#kampus">Kampus</a></li><li><a href="#jamoa">Jamoa</a></li><li><a href="#video">Video</a></li>
+    <li id="authLi"><a href="login.html">Kirish</a></li>
   </ul>
 </div></nav>
 
@@ -94,6 +95,7 @@ try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark
 
 <section id="jamoa"><div class="wrap">
   <h2>Odamlar va loyihalar</h2>
+  <div class="panel" id="panel"></div>
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" aria-selected="true" data-t="team">O‘qituvchilar</button>
     <button class="tab" role="tab" aria-selected="false" data-t="proj">O‘quvchi loyihalari</button>
@@ -111,5 +113,6 @@ try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark
 <footer><div class="wrap"><b>Lider xususiy maktabi</b><p>© <span id="yr"></span> · Barcha huquqlar himoyalangan</p></div></footer>
 
 <script src="script.js"></script>
+<script type="module" src="members.js"></script>
 </body>
 </html>
