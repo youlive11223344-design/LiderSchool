@@ -7,8 +7,17 @@ import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/fi
 
 const $ = s => document.querySelector(s);
 const msg = (t, ok) => { const m = $('#msg'); m.textContent = t; m.className = ok ? 'ok' : ''; };
-const NEXT = "index.html#jamoa";
+const NEXT = "index.html";
 let mode = 'login', busy = false;
+
+// ---------- Parolni ko'rsatish / yashirish (ko'z tugmasi) ----------
+document.querySelectorAll('.eye').forEach(b => b.onclick = () => {
+  const i = document.getElementById(b.dataset.for);
+  const show = i.type === 'password';
+  i.type = show ? 'text' : 'password';
+  b.classList.toggle('on', show);
+  b.setAttribute('aria-label', show ? 'Parolni yashirish' : 'Parolni ko‘rsatish');
+});
 
 // ---------- Email yoki telefon -> Firebase email ----------
 function parseId(v) {
@@ -34,7 +43,7 @@ const ERR = {
   'auth/popup-closed-by-user': "Google oynasi yopildi.",
   'auth/popup-blocked': "Brauzer Google oynasini blokladi. Ruxsat bering.",
   'auth/unauthorized-domain': "Bu domen Firebase'da ruxsat etilmagan (Authentication → Settings → Authorized domains).",
-  'permission-denied': "Bazaga yozishga ruxsat yo‘q (firestore.rules ni tekshiring)."
+  'permission-denied': "Bazaga yozishga ruxsat yo‘q (Firestore rules ni tekshiring)."
 };
 const showErr = e => msg(ERR[e.code] || ("Xatolik: " + (e.code || e.message)));
 
@@ -81,7 +90,7 @@ $('#f').onsubmit = async e => {
       const cred = await createUserWithEmailAndPassword(auth, id.email, pw);
       await updateProfile(cred.user, { displayName: name });
       await setDoc(doc(db, 'users', cred.user.uid), {
-        name, role, kind: id.kind, identifier: id.shown, createdAt: serverTimestamp()
+        name, role, kind: id.kind, identifier: id.shown, photo: '', bio: '', createdAt: serverTimestamp()
       });
       location.href = NEXT;
     }
@@ -119,7 +128,7 @@ $('#fin').onsubmit = async e => {
   if (!$('#gtc').checked) return msg("Foydalanish shartlariga rozilik bering.");
   try {
     await setDoc(doc(db, 'users', user.uid), {
-      name, role, kind: 'google', identifier: user.email || '', createdAt: serverTimestamp()
+      name, role, kind: 'google', identifier: user.email || '', photo: '', bio: '', createdAt: serverTimestamp()
     });
     await updateProfile(user, { displayName: name });
     location.href = NEXT;

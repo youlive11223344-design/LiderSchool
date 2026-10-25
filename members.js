@@ -1,5 +1,5 @@
 import { auth, db } from "./firebase.js";
-import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, collection, getDocs, query, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -11,15 +11,27 @@ const initials = n => String(n).trim().split(/\s+/).map(w => w[0]).join('').slic
 let user = null, profile = null, editing = null; // editing: {type:'teacher'|'project', id}
 let teachers = new Map(), projects = new Map();
 
-// ---------- Nav: Kirish / Chiqish tugmalari ----------
+// ---------- Profil tugmasi uchun uslub ----------
+document.head.insertAdjacentHTML('beforeend', `<style>
+#authLi a.pbtn{display:flex;align-items:center;gap:8px;padding:4px 16px 4px 4px;background:transparent;border:1.5px solid var(--gold);color:#fff}
+#authLi a.pbtn:hover{background:rgba(201,162,74,.18);transform:none}
+.pav{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#0A1B45;display:grid;place-items:center;font:700 .8rem var(--sans);overflow:hidden;flex:none}
+.pav img{width:100%;height:100%;object-fit:cover;display:block}
+.pnm{max-width:110px;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:820px){.pnm{display:none}#authLi a.pbtn{padding:3px}}
+</style>`);
+
+// ---------- Nav: Kirish yoki Profil tugmasi ----------
 function paintNav() {
   const box = $('#authLi');
   if (!box) return;
-  box.innerHTML = user
-    ? `<a class="nm" href="#jamoa">${esc(profile?.name || user.displayName || 'Profil')}</a><a class="out" href="#" id="logout">Chiqish</a>`
-    : `<a href="login.html">Kirish</a>`;
-  const lo = $('#logout');
-  if (lo) lo.onclick = async e => { e.preventDefault(); await signOut(auth); };
+  if (user) {
+    const name = profile?.name || user.displayName || 'Profil';
+    const av = profile?.photo ? `<img src="${esc(profile.photo)}" alt="">` : esc(initials(name));
+    box.innerHTML = `<a class="pbtn" href="profile.html" title="Profilim"><span class="pav">${av}</span><span class="pnm">${esc(name)}</span></a>`;
+  } else {
+    box.innerHTML = `<a href="login.html">Kirish</a>`;
+  }
 }
 
 // ---------- Ma'lumotlarni yuklash va chizish ----------
@@ -59,7 +71,7 @@ function render() {
   renderPanel();
 }
 
-// ---------- Forma paneli (o'qituvchi yoki o'quvchi uchun) ----------
+// ---------- Forma paneli: o'qituvchi faqat o'qituvchilarga, o'quvchi faqat loyihaga ----------
 function renderPanel() {
   const P = $('#panel');
   if (!P) return;
@@ -73,10 +85,10 @@ function renderPanel() {
     const own = teachers.get(user.uid);
     const v = (editing?.type === 'teacher' ? own : null) || {};
     P.innerHTML = `<form id="pf" class="pf"><h3>${own ? (editing ? 'Ma’lumotni tahrirlash' : 'Siz ro‘yxatdasiz') : 'O‘zingizni o‘qituvchilar ro‘yxatiga qo‘shing'}</h3>
-      ${own && !editing ? `<p class="note">Kartangiz pastda. «Tahrirlash» yoki «O‘chirish» tugmasidan foydalaning.</p>` : `
+      ${own && !editing ? `<p class="note">Kartangiz pastda. «Tahrirlash» yoki «O‘chirish» tugmasidan foydalaning. Rasm va ismni <a href="profile.html">profil sahifasida</a> o‘zgartirasiz.</p>` : `
       <input name="r" placeholder="Fan va tajriba (masalan: Matematika, 5 yil)" value="${esc(v.r)}" required maxlength="80">
-      <input name="photo" placeholder="Rasm havolasi (ixtiyoriy, https://…)" value="${esc(v.photo)}" maxlength="300">
-      <textarea name="b" placeholder="Qisqacha o‘zingiz haqingizda" required maxlength="200">${esc(v.b)}</textarea>
+      <textarea name="b" placeholder="Qisqacha o‘zingiz haqingizda" required maxlength="200">${esc(v.b || profile.bio)}</textarea>
+      <p class="note">Kartadagi rasm va ism <a href="profile.html">profilingizdan</a> olinadi.</p>
       <button class="btn gold" type="submit">${editing ? 'Saqlash' : 'Qo‘shish'}</button>
       ${editing ? '<button class="btn line" type="button" id="cancel">Bekor qilish</button>' : ''}`}
     </form>`;
@@ -99,7 +111,7 @@ function renderPanel() {
     try {
       if (profile.role === 'teacher') {
         await setDoc(doc(db, 'teachers', user.uid), {
-          uid: user.uid, n: profile.name, r: d.r.trim(), b: d.b.trim(), photo: d.photo.trim(), updatedAt: serverTimestamp()
+          uid: user.uid, n: profile.name, r: d.r.trim(), b: d.b.trim(), photo: profile.photo || '', updatedAt: serverTimestamp()
         });
       } else if (editing) {
         await updateDoc(doc(db, 'projects', editing.id), { tag: d.tag, n: d.n.trim(), b: d.b.trim(), ownerUid: user.uid });
