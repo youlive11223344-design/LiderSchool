@@ -11,12 +11,12 @@ const initials = n => String(n).trim().split(/\s+/).map(w => w[0]).join('').slic
 let user = null, profile = null, editing = null; // editing: {type:'teacher'|'project', id}
 let teachers = new Map(), projects = new Map();
 
-// ---------- Nav: Kirish / Chiqish ----------
+// ---------- Nav: Kirish / Chiqish tugmalari ----------
 function paintNav() {
-  const li = $('#authLi');
-  if (!li) return;
-  li.innerHTML = user
-    ? `<a href="#jamoa">${esc(profile?.name || user.displayName || 'Profil')}</a> · <a href="#" id="logout">Chiqish</a>`
+  const box = $('#authLi');
+  if (!box) return;
+  box.innerHTML = user
+    ? `<a class="nm" href="#jamoa">${esc(profile?.name || user.displayName || 'Profil')}</a><a class="out" href="#" id="logout">Chiqish</a>`
     : `<a href="login.html">Kirish</a>`;
   const lo = $('#logout');
   if (lo) lo.onclick = async e => { e.preventDefault(); await signOut(auth); };
