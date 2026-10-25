@@ -8,27 +8,30 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const initials = n => String(n).trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
-let user = null, profile = null, editing = null; // editing: {type:'teacher'|'project', id}
+let user = null, profile = null, isAdmin = false, editing = null; // editing: {type:'teacher'|'project', id}
 let teachers = new Map(), projects = new Map();
 
-// ---------- Profil tugmasi uchun uslub ----------
+// ---------- Profil va admin tugmalari uchun uslub ----------
 document.head.insertAdjacentHTML('beforeend', `<style>
 #authLi a.pbtn{display:flex;align-items:center;gap:8px;padding:4px 16px 4px 4px;background:transparent;border:1.5px solid var(--gold);color:#fff}
 #authLi a.pbtn:hover{background:rgba(201,162,74,.18);transform:none}
+#authLi a.adm{background:transparent;color:var(--gold2);border-color:rgba(201,162,74,.5)}
+#authLi a.adm:hover{background:rgba(201,162,74,.18);transform:none}
 .pav{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#0A1B45;display:grid;place-items:center;font:700 .8rem var(--sans);overflow:hidden;flex:none}
 .pav img{width:100%;height:100%;object-fit:cover;display:block}
 .pnm{max-width:110px;overflow:hidden;text-overflow:ellipsis}
 @media(max-width:820px){.pnm{display:none}#authLi a.pbtn{padding:3px}}
 </style>`);
 
-// ---------- Nav: Kirish yoki Profil tugmasi ----------
+// ---------- Nav: Kirish yoki Profil (+ Admin) tugmasi ----------
 function paintNav() {
   const box = $('#authLi');
   if (!box) return;
   if (user) {
     const name = profile?.name || user.displayName || 'Profil';
     const av = profile?.photo ? `<img src="${esc(profile.photo)}" alt="">` : esc(initials(name));
-    box.innerHTML = `<a class="pbtn" href="profile.html" title="Profilim"><span class="pav">${av}</span><span class="pnm">${esc(name)}</span></a>`;
+    box.innerHTML = (isAdmin ? `<a class="adm" href="admin.html">Admin</a>` : '') +
+      `<a class="pbtn" href="profile.html" title="Profilim"><span class="pav">${av}</span><span class="pnm">${esc(name)}</span></a>`;
   } else {
     box.innerHTML = `<a href="login.html">Kirish</a>`;
   }
@@ -80,6 +83,10 @@ function renderPanel() {
     return;
   }
   if (!profile) { P.innerHTML = `<p class="note">Profil to‘liq emas. <a href="login.html">Profilni yakunlang</a>.</p>`; return; }
+  if (profile.banned) {
+    P.innerHTML = `<p class="note">Akkauntingiz cheklangan, shuning uchun ma’lumot qo‘sha olmaysiz. Maktab ma’muriyati bilan bog‘laning.</p>`;
+    return;
+  }
 
   if (profile.role === 'teacher') {
     const own = teachers.get(user.uid);
@@ -144,8 +151,11 @@ document.addEventListener('click', async e => {
 
 // ---------- Boshlash ----------
 onAuthStateChanged(auth, async u => {
-  user = u; profile = null; editing = null;
-  if (u) { try { const s = await getDoc(doc(db, 'users', u.uid)); profile = s.exists() ? s.data() : null; } catch (e) {} }
+  user = u; profile = null; isAdmin = false; editing = null;
+  if (u) {
+    try { const s = await getDoc(doc(db, 'users', u.uid)); profile = s.exists() ? s.data() : null; } catch (e) {}
+    try { isAdmin = (await getDoc(doc(db, 'admins', u.uid))).exists(); } catch (e) {}
+  }
   paintNav();
   await load();
 });

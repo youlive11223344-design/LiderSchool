@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Admin panel — Lider xususiy maktabi</title>
+<script>
+try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:var(--bg2);min-height:100vh}
+.top{background:var(--navy);padding:14px 0}
+.top .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.top .logo{font:700 1.3rem var(--serif);color:#fff;text-decoration:none}
+.top .logo b{color:var(--gold)}
+.top .logo small{font:700 .75rem var(--sans);color:var(--gold2);margin-left:8px;letter-spacing:.08em;text-transform:uppercase}
+.top .right{display:flex;gap:14px;align-items:center;color:#dbe4ff;font-size:.9rem}
+.top .right a,.top .right button{color:#dbe4ff;text-decoration:none;background:none;border:0;font:500 .9rem var(--sans);cursor:pointer}
+.top .right a:hover,.top .right button:hover{color:var(--gold2)}
+.pg{padding:28px 0 72px}
+.stats2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:26px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px}
+.sc b{display:block;font:700 2rem var(--serif);color:var(--head)}
+.sc span{color:var(--mute);font-size:.85rem}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.toolbar input,.toolbar select{padding:11px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font:500 .95rem var(--sans)}
+.toolbar input{flex:1;min-width:200px}
+.toolbar input:focus,.toolbar select:focus{outline:none;border-color:var(--gold)}
+.btn.sm{padding:10px 20px;font-size:.9rem}
+.tw{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:820px}
+th{text-align:left;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);padding:14px 16px;border-bottom:1px solid var(--border)}
+td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:.92rem;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.who{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--head)}
+.pav{width:36px;height:36px;border-radius:50%;background:var(--chip);color:var(--accent);display:grid;place-items:center;font:700 .85rem var(--sans);overflow:hidden;flex:none;border:2px solid var(--gold)}
+.pav img{width:100%;height:100%;object-fit:cover;display:block}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;font-weight:700;background:var(--chip);color:var(--accent)}
+.pill.ok{background:rgba(46,158,91,.15);color:#2e9e5b}
+.pill.bad{background:rgba(214,69,69,.15);color:#d64545}
+.ac{display:flex;gap:6px;flex-wrap:wrap}
+.empty{padding:36px;text-align:center;color:var(--mute)}
+.cards .t .mini{margin-top:14px}
+#deny{max-width:520px;margin:12vh auto;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px}
+#deny h1{font-size:1.6rem;color:var(--head);margin-bottom:10px}
+#deny code{display:block;margin:14px 0;padding:10px;border-radius:10px;background:var(--chip);color:var(--accent);word-break:break-all;font-size:.85rem}
+#load{padding:80px;text-align:center;color:var(--mute)}
+</style>
+</head>
+<body>
+
+<div id="load">Yuklanmoqda…</div>
+
+<div id="deny" hidden>
+  <h1>Ruxsat yo‘q</h1>
+  <p class="lead" style="margin:0 auto 6px">Bu sahifa faqat administratorlar uchun.</p>
+  <p class="muted" style="color:var(--mute);font-size:.88rem">Agar siz sayt egasi bo‘lsangiz, quyidagi UID ni Firestore'dagi <b>admins</b> to‘plamiga hujjat ID sifatida qo‘shing:</p>
+  <code id="uid"></code>
+  <a class="btn gold sm" href="index.html">Saytga qaytish</a>
+</div>
+
+<div id="app" hidden>
+  <header class="top"><div class="wrap">
+    <a class="logo" href="index.html">Lider<b>.</b><small>Admin</small></a>
+    <div class="right">
+      <span id="who"></span>
+      <a href="index.html">Sayt</a>
+      <button id="logout" type="button">Chiqish</button>
+    </div>
+  </div></header>
+
+  <main class="wrap pg">
+    <div class="stats2" id="stats"></div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-t="users">Foydalanuvchilar</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="teachers">O‘qituvchi kartalari</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="projects">Loyihalar</button>
+    </div>
+
+    <section id="vUsers" style="padding:0">
+      <div class="toolbar">
+        <input type="text" id="q" placeholder="Ism, email yoki telefon bo‘yicha qidirish…">
+        <select id="rf">
+          <option value="">Barcha rollar</option>
+          <option value="teacher">O‘qituvchilar</option>
+          <option value="student">O‘quvchilar</option>
+        </select>
+        <button class="btn line sm" id="refresh" type="button">Yangilash</button>
+        <button class="btn gold sm" id="csv" type="button">Excel (CSV)</button>
+      </div>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Foydalanuvchi</th><th>Rol</th><th>Aloqa</th><th>Usul</th><th>Sana</th><th>Holat</th><th>Amallar</th></tr></thead>
+          <tbody id="tb"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="vTeachers" style="padding:0" hidden><div class="cards" id="tcards"></div></section>
+    <section id="vProjects" style="padding:0" hidden><div class="cards" id="pcards"></div></section>
+  </main>
+</div>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>

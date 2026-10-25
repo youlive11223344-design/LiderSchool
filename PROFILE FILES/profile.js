@@ -1,4 +1,4 @@
-import { auth, db } from "./firebase.js";
+import { auth, db } from "../ADMIN PANEL/firebase.js";
 import {
   onAuthStateChanged, signOut, updateProfile, updatePassword, deleteUser,
   reauthenticateWithCredential, reauthenticateWithPopup, EmailAuthProvider, GoogleAuthProvider
