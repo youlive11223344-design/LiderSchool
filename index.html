@@ -3,141 +3,116 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kirish — Lider xususiy maktabi</title>
+<title>Lider xususiy maktabi</title>
 <script>
 try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-<style>
-body{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(160deg,var(--navy),#0d2566)}
-.box{width:min(460px,100%);background:var(--card);color:var(--text);border-radius:24px;padding:32px;border-top:6px solid var(--gold);box-shadow:0 30px 80px rgba(0,0,0,.4)}
-.box h1{font-size:2rem;color:var(--head);margin-bottom:4px}
-.box .sub{color:var(--mute);margin-bottom:20px;font-size:.92rem}
-.back{display:inline-block;margin-bottom:14px;color:var(--accent);text-decoration:none;font-size:.9rem}
-.sw{display:flex;gap:8px;margin-bottom:20px}
-.sw button{flex:1;padding:10px;border-radius:999px;border:2px solid var(--head);background:var(--card);color:var(--head);font:700 .95rem var(--sans);cursor:pointer}
-.sw button[aria-selected=true]{background:var(--tab-on-bg);color:var(--tab-on-fg);border-color:var(--tab-on-bg)}
-label{display:block;font-weight:700;font-size:.85rem;margin:14px 0 6px;color:var(--head)}
-input[type=text],input[type=password]{width:100%;padding:13px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font:500 1rem var(--sans)}
-input:focus{outline:none;border-color:var(--gold)}
-.pwrap{position:relative}
-.pwrap input{padding-right:48px}
-.eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;background:transparent;color:var(--mute);border-radius:50%;cursor:pointer;display:grid;place-items:center}
-.eye:hover{color:var(--gold)}
-.eye .e-off{display:none}
-.eye.on .e-off{display:block}
-.eye.on .e-open{display:none}
-.roles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.roles label{margin:0;display:flex;align-items:center;gap:8px;padding:12px;border:1.5px solid var(--border);border-radius:12px;cursor:pointer;font-weight:500;color:var(--text)}
-.roles input{accent-color:var(--gold)}
-.terms{display:flex;gap:10px;align-items:flex-start;margin:16px 0 0;font-weight:500;font-size:.88rem;color:var(--text)}
-.terms input{margin-top:4px;accent-color:var(--gold)}
-.terms a{color:var(--accent)}
-.go{width:100%;margin-top:20px}
-.or{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--mute);font-size:.85rem}
-.or::before,.or::after{content:"";flex:1;height:1px;background:var(--border)}
-.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;border-radius:999px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font:700 1rem var(--sans);cursor:pointer}
-.gbtn:hover{border-color:var(--gold)}
-#msg{min-height:1.4em;margin-top:14px;font-size:.9rem;color:#d64545}
-#msg.ok{color:#2e9e5b}
-.hint{font-size:.78rem;color:var(--mute);margin-top:6px}
-dialog{max-width:560px;width:92%;border:0;border-radius:20px;padding:28px;background:var(--card);color:var(--text)}
-dialog::backdrop{background:rgba(5,12,32,.7)}
-dialog h2{font-size:1.5rem;margin-bottom:12px}
-dialog ol{margin:0 0 18px 20px;font-size:.92rem}dialog li{margin-bottom:8px}
-</style>
 </head>
 <body>
-<main class="box">
-  <a class="back" href="index.html">← Saytga qaytish</a>
-  <h1 id="ttl">Kirish</h1>
-  <p class="sub" id="sub">Akkauntingiz bo‘lsa, kirish uchun login va parolni kiriting.</p>
 
-  <div class="sw" role="tablist">
-    <button type="button" role="tab" aria-selected="true" data-m="login">Kirish</button>
-    <button type="button" role="tab" aria-selected="false" data-m="reg">Ro‘yxatdan o‘tish</button>
+<nav><div class="wrap">
+  <a class="logo" href="#top">Lider<b>.</b></a>
+  <div id="authLi"><a class="abtn" href="login.html">Kirish</a></div>
+  <button id="theme" type="button" aria-label="Tun/Kun rejimi">🌙</button>
+  <button id="burger" aria-label="Menyu">☰</button>
+  <ul id="menu">
+    <li><a href="#manzil">Manzil</a></li><li><a href="#galereya">Galereya</a></li>
+    <li><a href="#kampus">Kampus</a></li><li><a href="#jamoa">Jamoa</a></li><li><a href="#video">Video</a></li>
+  </ul>
+</div></nav>
+
+<header class="hero" id="top">
+  <div class="ring"></div>
+  <div class="wrap">
+    <div>
+      <h1>Bugun o‘qigan bola, ertaga <span id="rot">yetakchi bo‘ladi</span></h1>
+      <p>Lider xususiy maktabi — chuqur bilim, kuchli xarakter va dunyoga ochiq fikrlash. Kichik sinflar, har bir o‘quvchiga alohida e’tibor.</p>
+      <div class="cta">
+        <a class="btn gold" href="#manzil">Maktabga yo‘l olish</a>
+        <a class="btn ghost" href="#kampus">Kampusni ko‘rish</a>
+      </div>
+      <div class="stats">
+        <div><b data-n="15">0</b><small>yillik tajriba</small></div>
+        <div><b data-n="12">0</b><small>o‘quvchi sinfda (o‘rtacha)</small></div>
+        <div><b data-n="98">0</b><small>% oliygohga kirish</small></div>
+      </div>
+    </div>
+    <div class="vbox">
+      <video id="heroVideo" src="" poster="" autoplay muted playsinline hidden></video>
+      <div class="ph" id="heroPh"><div><b>L</b>Maktab banneri yoki qisqa video shu yerda.<br>script.js ichida <code>HERO_VIDEO</code> ni to‘ldiring.</div></div>
+    </div>
   </div>
+</header>
 
-  <form id="f" novalidate>
-    <div id="nameW" hidden>
-      <label for="name">Ism va familiya</label>
-      <input type="text" id="name" autocomplete="name" placeholder="Masalan: Aziza Karimova">
-    </div>
-
-    <label for="id">Email yoki telefon raqam</label>
-    <input type="text" id="id" autocomplete="username" placeholder="nom@gmail.com yoki +998 90 123 45 67">
-
-    <label for="pw">Parol</label>
-    <div class="pwrap">
-      <input type="password" id="pw" autocomplete="current-password" placeholder="Kamida 6 ta belgi">
-      <button type="button" class="eye" data-for="pw" aria-label="Parolni ko‘rsatish">
-        <svg class="e-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        <svg class="e-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-      </button>
-    </div>
-
-    <div id="regW" hidden>
-      <label for="pw2">Parolni takrorlang</label>
-      <div class="pwrap">
-        <input type="password" id="pw2" autocomplete="new-password">
-        <button type="button" class="eye" data-for="pw2" aria-label="Parolni ko‘rsatish">
-          <svg class="e-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          <svg class="e-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-        </button>
+<section id="manzil"><div class="wrap">
+  <h2>Bizni toping</h2>
+  <p class="lead">Tugmani bosing — telefoningizdagi xarita ilovasi hozirgi joyingizdan maktabgacha marshrutni o‘zi chizadi.</p>
+  <div class="loc">
+    <div class="card">
+      <h3>Lider xususiy maktabi</h3>
+      <p id="addr"></p>
+      <div class="btns">
+        <a class="btn gold" id="navG" target="_blank" rel="noopener">Yo‘nalishni olish (Google Maps)</a>
+        <a class="btn line" id="navY" target="_blank" rel="noopener">Yandex Maps orqali ochish</a>
+        <button class="btn line" id="navMe" type="button">Mening joyimdan masofa</button>
       </div>
-
-      <label>Siz kimsiz?</label>
-      <div class="roles">
-        <label><input type="radio" name="role" value="student"> O‘quvchi</label>
-        <label><input type="radio" name="role" value="teacher"> O‘qituvchi</label>
-      </div>
-
-      <label class="terms"><input type="checkbox" id="tc"><span><a href="#" class="tl">Foydalanish shartlari</a> bilan tanishdim va roziman</span></label>
+      <div id="locmsg" role="status"></div>
     </div>
+    <iframe id="map" title="Maktab xaritasi" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+</div></section>
 
-    <button class="btn gold go" id="submit" type="submit">Kirish</button>
-  </form>
+<section id="galereya"><div class="wrap">
+  <h2>Maktab hayoti</h2>
+  <p class="lead">Dars, tanaffus va to‘garaklardan lavhalar. Rasmni bosing — kattalashadi.</p>
+  <div class="grid" id="gal"></div>
+</div></section>
 
-  <div class="or">yoki</div>
-  <button class="gbtn" id="google" type="button">
-    <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
-    Google bilan davom etish
-  </button>
+<div id="lb" role="dialog" aria-modal="true"><button aria-label="Yopish">×</button><div id="lbc"></div></div>
 
-  <form id="fin" hidden novalidate>
-    <h2 style="margin-top:22px;font-size:1.3rem">Profilni yakunlang</h2>
-    <label for="gname">Ism va familiya</label>
-    <input type="text" id="gname">
-    <label>Siz kimsiz?</label>
-    <div class="roles">
-      <label><input type="radio" name="grole" value="student"> O‘quvchi</label>
-      <label><input type="radio" name="grole" value="teacher"> O‘qituvchi</label>
-    </div>
-    <label class="terms"><input type="checkbox" id="gtc"><span><a href="#" class="tl">Foydalanish shartlari</a> bilan tanishdim va roziman</span></label>
-    <button class="btn gold go" type="submit">Saqlash va davom etish</button>
-  </form>
+<section id="kampus"><div class="wrap">
+  <h2>Virtual kampus</h2>
+  <p class="lead">Xonani tanlang va u haqida bilib oling.</p>
+  <div class="campus">
+    <svg viewBox="0 0 600 420" role="group" aria-label="Kampus xaritasi">
+      <rect x="10" y="10" width="580" height="400" rx="16" fill="none" stroke="rgba(255,255,255,.12)" stroke-dasharray="6 6"/>
+      <g id="rooms">
+        <rect class="room" data-k="sinf" tabindex="0" x="30" y="30" width="250" height="130" rx="12"/><text class="rt" x="155" y="100">Sinfxonalar</text>
+        <rect class="room" data-k="lab" tabindex="0" x="300" y="30" width="130" height="130" rx="12"/><text class="rt" x="365" y="100">Laboratoriya</text>
+        <rect class="room" data-k="kutub" tabindex="0" x="450" y="30" width="120" height="130" rx="12"/><text class="rt" x="510" y="100">Kutubxona</text>
+        <rect class="room" data-k="zal" tabindex="0" x="30" y="250" width="250" height="140" rx="12"/><text class="rt" x="155" y="325">Sport zali</text>
+        <rect class="room" data-k="it" tabindex="0" x="300" y="250" width="130" height="140" rx="12"/><text class="rt" x="365" y="325">IT markazi</text>
+        <rect class="room" data-k="oshxona" tabindex="0" x="450" y="250" width="120" height="140" rx="12"/><text class="rt" x="510" y="325">Oshxona</text>
+      </g>
+      <text x="300" y="215" text-anchor="middle" fill="#E7C777" font-size="12" font-family="Manrope">— markaziy hovli —</text>
+    </svg>
+    <div class="info" id="info" aria-live="polite"></div>
+  </div>
+</div></section>
 
-  <div id="msg" role="status" aria-live="polite"></div>
-  <p class="hint">Telefon raqam bilan kirishda SMS yuborilmaydi: raqamingiz va parolingiz akkaunt nomi sifatida ishlatiladi. Parolni unutsangiz, tiklash imkoni bo‘lmaydi — uni eslab qoling.</p>
-</main>
+<section id="jamoa"><div class="wrap">
+  <h2>Odamlar va loyihalar</h2>
+  <div class="panel" id="panel"></div>
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-t="team">O‘qituvchilar</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="proj">O‘quvchi loyihalari</button>
+  </div>
+  <div class="cards" id="team"></div>
+  <div class="cards" id="proj" hidden></div>
+</div></section>
 
-<dialog id="terms">
-  <h2>Foydalanish shartlari</h2>
-  <ol>
-    <li>Ushbu sayt Lider xususiy maktabi o‘quvchilari, o‘qituvchilari va ota-onalari uchun mo‘ljallangan.</li>
-    <li>Ro‘yxatdan o‘tishda to‘g‘ri ism va aloqa ma’lumotlarini kiriting. Boshqa shaxs nomidan akkaunt ochish taqiqlanadi.</li>
-    <li>O‘qituvchilar faqat o‘zi haqidagi ma’lumotni, o‘quvchilar esa faqat o‘z loyihalarini joylashi mumkin. Har kim faqat o‘z yozuvini tahrirlaydi yoki o‘chiradi.</li>
-    <li>Haqoratli, noqonuniy, boshqalarning mualliflik huquqini buzuvchi yoki maktab obro‘siga zarar yetkazuvchi materiallar joylashtirish mumkin emas.</li>
-    <li>Parolingiz sir saqlanadi va uni boshqalarga bermang. Akkaunt orqali bajarilgan harakatlar uchun o‘zingiz javobgarsiz.</li>
-    <li>Ma’lumotlaringiz (ism, email yoki telefon, rol) faqat sayt ishlashi uchun saqlanadi va uchinchi shaxslarga berilmaydi. Parol shifrlangan holda saqlanadi, maktab ma’muriyati ham uni ko‘ra olmaydi.</li>
-    <li>Maktab ma’muriyati qoidalarni buzgan akkaunt va yozuvlarni ogohlantirishsiz o‘chirish huquqini saqlab qoladi.</li>
-    <li>Shartlar o‘zgarishi mumkin; saytdan foydalanishni davom ettirish yangi shartlarga rozilikni bildiradi.</li>
-  </ol>
-  <button class="btn gold" id="tclose" type="button">Yopish</button>
-</dialog>
+<section id="video"><div class="wrap">
+  <h2>Video-taqdimotlar</h2>
+  <p class="lead">Maktab haqida 1–2 daqiqalik videolar.</p>
+  <div class="vids" id="vids"></div>
+</div></section>
 
-<script type="module" src="login.js"></script>
+<footer><div class="wrap"><b>Lider xususiy maktabi</b><p>© <span id="yr"></span> · Barcha huquqlar himoyalangan</p></div></footer>
+
+<script src="script.js"></script>
+<script type="module" src="members.js"></script>
 </body>
 </html>
