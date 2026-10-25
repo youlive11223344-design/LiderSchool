@@ -1,14 +1,25 @@
 import { auth, db } from "./firebase.js";
 import {
   createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup,
-  GoogleAuthProvider, updateProfile
+  GoogleAuthProvider, updateProfile, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const $ = s => document.querySelector(s);
 const msg = (t, ok) => { const m = $('#msg'); m.textContent = t; m.className = ok ? 'ok' : ''; };
 const NEXT = "index.html";
-let mode = 'login', busy = false;
+let mode = 'login', busy = false, holding = false;
+
+const go = () => { msg('Kirdingiz! Sahifa ochilmoqda…', true); location.replace(NEXT); };
+
+// ---------- Allaqachon kirgan bo'lsa, bosh sahifaga o'tkazamiz ----------
+onAuthStateChanged(auth, async u => {
+  if (!u || busy || holding) return;
+  try {
+    const s = await getDoc(doc(db, 'users', u.uid));
+    if (s.exists()) go();
+  } catch (e) {}
+});
 
 // ---------- Parolni ko'rsatish / yashirish (ko'z tugmasi) ----------
 document.querySelectorAll('.eye').forEach(b => b.onclick = () => {
@@ -77,8 +88,10 @@ $('#f').onsubmit = async e => {
   busy = true; $('#submit').disabled = true; msg('Iltimos, kuting…', true);
   try {
     if (mode === 'login') {
-      await signInWithEmailAndPassword(auth, id.email, pw);
-      location.href = NEXT;
+      const cred = await signInWithEmailAndPassword(auth, id.email, pw);
+      const s = await getDoc(doc(db, 'users', cred.user.uid));
+      if (!s.exists()) throw { code: 'x', message: "Bu akkaunt uchun profil topilmadi. «Ro‘yxatdan o‘tish» orqali qaytadan yarating yoki administratorga murojaat qiling." };
+      go();
     } else {
       const name = $('#name').value.trim();
       const role = document.querySelector('input[name=role]:checked')?.value;
@@ -92,7 +105,7 @@ $('#f').onsubmit = async e => {
       await setDoc(doc(db, 'users', cred.user.uid), {
         name, role, kind: id.kind, identifier: id.shown, photo: '', bio: '', createdAt: serverTimestamp()
       });
-      location.href = NEXT;
+      go();
     }
   } catch (err) {
     err.code === 'x' ? msg(err.message) : showErr(err);
@@ -106,8 +119,9 @@ $('#google').onclick = async () => {
   try {
     const { user } = await signInWithPopup(auth, new GoogleAuthProvider());
     const snap = await getDoc(doc(db, 'users', user.uid));
-    if (snap.exists()) { location.href = NEXT; return; }
+    if (snap.exists()) { go(); return; }
     // birinchi marta: rol va shartlarni so'raymiz
+    holding = true;
     $('#f').hidden = true; document.querySelector('.sw').hidden = true;
     $('.or').hidden = true; $('#google').hidden = true;
     $('#gname').value = user.displayName || '';
@@ -131,6 +145,6 @@ $('#fin').onsubmit = async e => {
       name, role, kind: 'google', identifier: user.email || '', photo: '', bio: '', createdAt: serverTimestamp()
     });
     await updateProfile(user, { displayName: name });
-    location.href = NEXT;
+    holding = false; go();
   } catch (err) { showErr(err); }
 };
