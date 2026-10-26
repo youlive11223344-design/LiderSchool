@@ -6,13 +6,15 @@ import {
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const $ = s => document.querySelector(s);
+const T = (k, v) => I18N.t(k, v);
 const msg = (t, ok) => { const m = $('#msg'); m.textContent = t; m.className = ok ? 'ok' : ''; };
 const NEXT = "index.html";
 let mode = 'login', busy = false, holding = false;
 
-auth.languageCode = 'uz';
+auth.languageCode = I18N.current();
+window.addEventListener('langchange', () => { auth.languageCode = I18N.current(); setMode(mode); });
 
-const go = () => { msg('Kirdingiz! Sahifa ochilmoqda…', true); location.replace(NEXT); };
+const go = () => { msg(T('l.go'), true); location.replace(NEXT); };
 
 // ---------- Allaqachon kirgan bo'lsa, bosh sahifaga o'tkazamiz ----------
 onAuthStateChanged(auth, async u => {
@@ -29,7 +31,7 @@ document.querySelectorAll('.eye').forEach(b => b.onclick = () => {
   const show = i.type === 'password';
   i.type = show ? 'text' : 'password';
   b.classList.toggle('on', show);
-  b.setAttribute('aria-label', show ? 'Parolni yashirish' : 'Parolni ko‘rsatish');
+  b.setAttribute('aria-label', T(show ? 'aria.hide' : 'aria.show'));
 });
 
 // ---------- Email yoki telefon -> Firebase email ----------
@@ -45,21 +47,10 @@ function parseId(v) {
   return { email: `${d}@tel.lider-maktab.uz`, kind: 'phone', shown: '+' + d };
 }
 
-const ERR = {
-  'auth/invalid-credential': "Login yoki parol noto‘g‘ri. Akkauntingiz bo‘lmasa, «Ro‘yxatdan o‘tish» ni tanlang.",
-  'auth/wrong-password': "Parol noto‘g‘ri.",
-  'auth/user-not-found': "Bunday akkaunt yo‘q. «Ro‘yxatdan o‘tish» ni tanlang.",
-  'auth/email-already-in-use': "Bu email yoki telefon bilan akkaunt bor. «Kirish» orqali kiring.",
-  'auth/weak-password': "Parol juda oddiy: kamida 6 ta belgi kiriting.",
-  'auth/invalid-email': "Email manzil noto‘g‘ri.",
-  'auth/too-many-requests': "Juda ko‘p urinish. Birozdan keyin qayta urinib ko‘ring.",
-  'auth/network-request-failed': "Internet bilan aloqa yo‘q.",
-  'auth/popup-closed-by-user': "Google oynasi yopildi.",
-  'auth/popup-blocked': "Brauzer Google oynasini blokladi. Ruxsat bering.",
-  'auth/unauthorized-domain': "Bu domen Firebase'da ruxsat etilmagan (Authentication → Settings → Authorized domains).",
-  'permission-denied': "Bazaga yozishga ruxsat yo‘q (Firestore rules ni tekshiring)."
+const showErr = e => {
+  const k = 'e.' + String(e.code || '').replace('auth/', '');
+  msg(I18N.has(k) ? T(k) : T('e.generic') + (e.code || e.message));
 };
-const showErr = e => msg(ERR[e.code] || ("Xatolik: " + (e.code || e.message)));
 
 // ---------- Rejim almashtirish ----------
 function setMode(m) {
@@ -68,33 +59,36 @@ function setMode(m) {
   const reg = m === 'reg';
   $('#nameW').hidden = !reg; $('#regW').hidden = !reg;
   $('#forgot').hidden = reg;
-  $('#ttl').textContent = reg ? "Ro‘yxatdan o‘tish" : "Kirish";
-  $('#sub').textContent = reg ? "Yangi akkaunt yarating: ma’lumotlarni kiriting va parol o‘ylab toping." : "Akkauntingiz bo‘lsa, kirish uchun login va parolni kiriting.";
-  $('#submit').textContent = reg ? "Akkaunt yaratish" : "Kirish";
+  $('#ttl').textContent = T(reg ? 'l.t.reg' : 'l.t.login');
+  $('#sub').textContent = T(reg ? 'l.s.reg' : 'l.s.login');
+  $('#submit').textContent = T(reg ? 'l.btn.reg' : 'l.btn.login');
   $('#pw').autocomplete = reg ? 'new-password' : 'current-password';
   msg('');
 }
 document.querySelectorAll('.sw button').forEach(b => b.onclick = () => setMode(b.dataset.m));
+setMode('login');
 
 // ---------- Parolni unutdim ----------
 $('#forgot').onclick = async e => {
   e.preventDefault();
   if (busy) return;
   const raw = $('#id').value.trim();
-  if (!raw) return msg("Avval yuqoridagi maydonga email manzilingizni yozing.");
-  if (!raw.includes('@')) return msg("Telefon raqam bilan ro‘yxatdan o‘tganlar parolni o‘zi tiklay olmaydi. Maktab ma’muriyatiga murojaat qiling.");
+  if (!raw) return msg(T('l.f.email'));
+  if (!raw.includes('@')) return msg(T('l.f.phone'));
   const id = parseId(raw);
-  if (!id) return msg("Email manzil noto‘g‘ri.");
-  busy = true; msg('Yuborilmoqda…', true);
+  if (!id) return msg(T('e.invalid-email'));
+  busy = true; msg(T('l.f.sending'), true);
   try {
     await sendPasswordResetEmail(auth, id.email);
-    msg("Agar bu email bilan akkaunt mavjud bo‘lsa, parolni tiklash havolasi yuborildi. «Spam» papkasini ham tekshiring.", true);
+    msg(T('l.f.ok'), true);
   } catch (err) { showErr(err); }
   finally { busy = false; }
 };
 
 // ---------- Shartlar ----------
-document.querySelectorAll('.tl').forEach(a => a.onclick = e => { e.preventDefault(); $('#terms').showModal(); });
+document.addEventListener('click', e => {
+  if (e.target.closest('.tl')) { e.preventDefault(); $('#terms').showModal(); }
+});
 $('#tclose').onclick = () => $('#terms').close();
 
 // ---------- Email / telefon + parol ----------
@@ -103,23 +97,23 @@ $('#f').onsubmit = async e => {
   if (busy) return;
   const id = parseId($('#id').value);
   const pw = $('#pw').value;
-  if (!id) return msg("Email yoki telefon raqamni to‘g‘ri kiriting (masalan +998 90 123 45 67).");
-  if (pw.length < 6) return msg("Parol kamida 6 ta belgidan iborat bo‘lsin.");
+  if (!id) return msg(T('l.e.id'));
+  if (pw.length < 6) return msg(T('l.e.pw'));
 
-  busy = true; $('#submit').disabled = true; msg('Iltimos, kuting…', true);
+  busy = true; $('#submit').disabled = true; msg(T('l.wait'), true);
   try {
     if (mode === 'login') {
       const cred = await signInWithEmailAndPassword(auth, id.email, pw);
       const s = await getDoc(doc(db, 'users', cred.user.uid));
-      if (!s.exists()) throw { code: 'x', message: "Bu akkaunt uchun profil topilmadi. «Ro‘yxatdan o‘tish» orqali qaytadan yarating yoki administratorga murojaat qiling." };
+      if (!s.exists()) throw { code: 'x', message: T('l.e.noprof') };
       go();
     } else {
       const name = $('#name').value.trim();
       const role = document.querySelector('input[name=role]:checked')?.value;
-      if (name.length < 2) throw { code: 'x', message: "Ism va familiyangizni kiriting." };
-      if (pw !== $('#pw2').value) throw { code: 'x', message: "Parollar bir xil emas." };
-      if (!role) throw { code: 'x', message: "O‘qituvchi yoki o‘quvchi ekanligingizni tanlang." };
-      if (!$('#tc').checked) throw { code: 'x', message: "Davom etish uchun foydalanish shartlariga rozilik bering." };
+      if (name.length < 2) throw { code: 'x', message: T('l.e.name') };
+      if (pw !== $('#pw2').value) throw { code: 'x', message: T('l.e.match') };
+      if (!role) throw { code: 'x', message: T('l.e.role') };
+      if (!$('#tc').checked) throw { code: 'x', message: T('l.e.terms') };
 
       const cred = await createUserWithEmailAndPassword(auth, id.email, pw);
       await updateProfile(cred.user, { displayName: name });
@@ -136,7 +130,7 @@ $('#f').onsubmit = async e => {
 // ---------- Google ----------
 $('#google').onclick = async () => {
   if (busy) return;
-  busy = true; msg('Google oynasi ochilmoqda…', true);
+  busy = true; msg(T('l.gopen'), true);
   try {
     const { user } = await signInWithPopup(auth, new GoogleAuthProvider());
     const snap = await getDoc(doc(db, 'users', user.uid));
@@ -146,7 +140,7 @@ $('#google').onclick = async () => {
     $('.or').hidden = true; $('#google').hidden = true;
     $('#gname').value = user.displayName || '';
     $('#fin').hidden = false;
-    msg("Google orqali kirdingiz. Profilni yakunlang.", true);
+    msg(T('l.gdone'), true);
   } catch (err) { showErr(err); }
   finally { busy = false; }
 };
@@ -156,10 +150,10 @@ $('#fin').onsubmit = async e => {
   const user = auth.currentUser;
   const name = $('#gname').value.trim();
   const role = document.querySelector('input[name=grole]:checked')?.value;
-  if (!user) return msg("Qaytadan Google orqali kiring.");
-  if (name.length < 2) return msg("Ism va familiyangizni kiriting.");
-  if (!role) return msg("O‘qituvchi yoki o‘quvchi ekanligingizni tanlang.");
-  if (!$('#gtc').checked) return msg("Foydalanish shartlariga rozilik bering.");
+  if (!user) return msg(T('l.e.again'));
+  if (name.length < 2) return msg(T('l.e.name'));
+  if (!role) return msg(T('l.e.role'));
+  if (!$('#gtc').checked) return msg(T('l.e.terms'));
   try {
     await setDoc(doc(db, 'users', user.uid), {
       name, role, kind: 'google', identifier: user.email || '', photo: '', bio: '', createdAt: serverTimestamp()

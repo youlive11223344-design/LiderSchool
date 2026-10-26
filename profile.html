@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Profilim — Lider xususiy maktabi</title>
+<title data-i="title.profile">Profilim — Lider xususiy maktabi</title>
 <script>
 try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="i18n.js"></script>
 <style>
 body{background:var(--bg2);min-height:100vh}
 .top{background:var(--navy);padding:14px 0}
@@ -55,21 +56,21 @@ form .btn{margin-top:18px}
 
 <header class="top"><div class="wrap">
   <a class="logo" href="index.html">Lider<b>.</b></a>
-  <a class="back" href="index.html">← Saytga qaytish</a>
+  <a class="back" href="index.html" data-i="l.back">← Saytga qaytish</a>
 </div></header>
 
 <main class="wrap pg" id="app" hidden>
 
   <div class="pc hd">
-    <div class="big"><span id="bigTxt"></span><img id="bigImg" alt="Profil rasmi" hidden></div>
+    <div class="big"><span id="bigTxt"></span><img id="bigImg" alt="" hidden></div>
     <div class="meta">
       <h1 id="pName"></h1>
       <span class="badge" id="pRole"></span>
       <p class="muted" id="pId"></p>
       <p class="muted" id="pSince"></p>
       <div class="row">
-        <button class="btn gold sm" id="pick" type="button">Rasm yuklash</button>
-        <button class="btn line sm" id="rm" type="button" hidden>Rasmni o‘chirish</button>
+        <button class="btn gold sm" id="pick" type="button" data-i="p.photo">Rasm yuklash</button>
+        <button class="btn line sm" id="rm" type="button" data-i="p.photoDel" hidden>Rasmni o‘chirish</button>
       </div>
       <input type="file" id="file" accept="image/*" hidden>
       <div class="msg" id="m0" role="status"></div>
@@ -77,76 +78,76 @@ form .btn{margin-top:18px}
   </div>
 
   <form class="pc" id="f1" novalidate>
-    <h2>Shaxsiy ma’lumotlar</h2>
-    <label for="nm">Ism va familiya</label>
+    <h2 data-i="p.h.info">Shaxsiy ma’lumotlar</h2>
+    <label for="nm" data-i="l.name">Ism va familiya</label>
     <input type="text" id="nm" maxlength="60" autocomplete="name">
-    <label for="bio">O‘zim haqimda</label>
-    <textarea id="bio" maxlength="200" placeholder="Qisqacha o‘zingiz haqingizda yozing"></textarea>
+    <label for="bio" data-i="p.bio">O‘zim haqimda</label>
+    <textarea id="bio" maxlength="200" data-ip="p.bio.ph"></textarea>
     <div class="cnt"><span id="bc">0</span>/200</div>
-    <button class="btn gold sm" type="submit">Saqlash</button>
+    <button class="btn gold sm" type="submit" data-i="m.save">Saqlash</button>
     <div class="msg" id="m1" role="status"></div>
   </form>
 
   <div class="pc">
-    <h2>Faoliyatim</h2>
+    <h2 data-i="p.h.act">Faoliyatim</h2>
     <div id="act"></div>
   </div>
 
   <form class="pc" id="f2" novalidate>
-    <h2>Parolni o‘zgartirish</h2>
-    <label for="cur">Joriy parol</label>
+    <h2 data-i="p.h.pw">Parolni o‘zgartirish</h2>
+    <label for="cur" data-i="p.cur">Joriy parol</label>
     <div class="pwrap">
       <input type="password" id="cur" autocomplete="current-password">
-      <button type="button" class="eye" data-for="cur" aria-label="Parolni ko‘rsatish">
+      <button type="button" class="eye" data-for="cur" aria-label="">
         <svg class="e-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <svg class="e-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
       </button>
     </div>
-    <label for="n1">Yangi parol</label>
+    <label for="n1" data-i="p.new1">Yangi parol</label>
     <div class="pwrap">
-      <input type="password" id="n1" autocomplete="new-password" placeholder="Kamida 6 ta belgi">
-      <button type="button" class="eye" data-for="n1" aria-label="Parolni ko‘rsatish">
+      <input type="password" id="n1" autocomplete="new-password" data-ip="l.pw.ph">
+      <button type="button" class="eye" data-for="n1" aria-label="">
         <svg class="e-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <svg class="e-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
       </button>
     </div>
-    <label for="n2">Yangi parolni takrorlang</label>
+    <label for="n2" data-i="p.new2">Yangi parolni takrorlang</label>
     <div class="pwrap">
       <input type="password" id="n2" autocomplete="new-password">
-      <button type="button" class="eye" data-for="n2" aria-label="Parolni ko‘rsatish">
+      <button type="button" class="eye" data-for="n2" aria-label="">
         <svg class="e-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <svg class="e-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
       </button>
     </div>
-    <button class="btn gold sm" type="submit">Parolni yangilash</button>
+    <button class="btn gold sm" type="submit" data-i="p.pwBtn">Parolni yangilash</button>
     <div class="msg" id="m2" role="status"></div>
   </form>
 
   <div class="pc" id="gnote" hidden>
-    <h2>Parol</h2>
-    <p class="muted">Siz Google orqali kirgansiz, shuning uchun parolni Google akkauntingiz sozlamalarida o‘zgartirasiz.</p>
+    <h2 data-i="l.pw">Parol</h2>
+    <p class="muted" data-i="p.gnote"></p>
   </div>
 
   <div class="pc">
-    <h2>Chiqish</h2>
-    <p class="muted">Bu qurilmadagi akkauntingizdan chiqasiz.</p>
-    <div class="row"><button class="btn line sm" id="logout" type="button">Akkauntdan chiqish</button></div>
+    <h2 data-i="p.h.out">Chiqish</h2>
+    <p class="muted" data-i="p.outTxt">Bu qurilmadagi akkauntingizdan chiqasiz.</p>
+    <div class="row"><button class="btn line sm" id="logout" type="button" data-i="p.outBtn">Akkauntdan chiqish</button></div>
   </div>
 
   <div class="pc dz">
-    <h2>Akkauntni o‘chirish</h2>
-    <p class="muted">Akkauntingiz, profilingiz, o‘qituvchi kartangiz va loyihalaringiz butunlay o‘chiriladi. Buni qaytarib bo‘lmaydi.</p>
+    <h2 data-i="p.h.del">Akkauntni o‘chirish</h2>
+    <p class="muted" data-i="p.delTxt"></p>
     <div id="dpwW">
-      <label for="dpw">Tasdiqlash uchun parolingiz</label>
+      <label for="dpw" data-i="p.delPw">Tasdiqlash uchun parolingiz</label>
       <div class="pwrap">
         <input type="password" id="dpw" autocomplete="current-password">
-        <button type="button" class="eye" data-for="dpw" aria-label="Parolni ko‘rsatish">
+        <button type="button" class="eye" data-for="dpw" aria-label="">
           <svg class="e-open" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           <svg class="e-off" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
         </button>
       </div>
     </div>
-    <div class="row"><button class="btn dng sm" id="del" type="button">Akkauntni o‘chirish</button></div>
+    <div class="row"><button class="btn dng sm" id="del" type="button" data-i="p.h.del">Akkauntni o‘chirish</button></div>
     <div class="msg" id="m3" role="status"></div>
   </div>
 

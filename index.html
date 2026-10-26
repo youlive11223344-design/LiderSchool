@@ -3,26 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lider xususiy maktabi</title>
+<title data-i="title.index">Lider xususiy maktabi</title>
 <script>
 try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="i18n.js"></script>
 </head>
 <body>
 
 <nav><div class="wrap">
   <a class="logo" href="#top">Lider<b>.</b></a>
-  <div id="authLi"><a class="abtn" href="login.html">Kirish</a></div>
-  <button id="theme" type="button" aria-label="Tun/Kun rejimi">🌙</button>
-  <button id="burger" aria-label="Menyu">☰</button>
+  <div id="authLi"><a class="abtn" href="login.html" data-i="nav.login">Kirish</a></div>
+  <button id="theme" type="button" data-ia="aria.theme" aria-label="Tun/Kun rejimi">🌙</button>
+  <button id="burger" data-ia="aria.menu" aria-label="Menyu">☰</button>
   <ul id="menu">
-    <li id="navNews" hidden><a href="#yangiliklar">Yangiliklar</a></li>
-    <li><a href="#manzil">Manzil</a></li><li><a href="#galereya">Galereya</a></li>
-    <li><a href="#kampus">Kampus</a></li><li><a href="#jamoa">Jamoa</a></li><li><a href="#video">Video</a></li>
-    <li><a href="#qabul">Qabul</a></li>
+    <li id="navNews" hidden><a href="#yangiliklar" data-i="nav.news">Yangiliklar</a></li>
+    <li><a href="#manzil" data-i="nav.loc">Manzil</a></li>
+    <li><a href="#galereya" data-i="nav.gal">Galereya</a></li>
+    <li><a href="#kampus" data-i="nav.campus">Kampus</a></li>
+    <li><a href="#jamoa" data-i="nav.team">Jamoa</a></li>
+    <li><a href="#video" data-i="nav.video">Video</a></li>
+    <li><a href="#qabul" data-i="nav.admission">Qabul</a></li>
   </ul>
 </div></nav>
 
@@ -30,16 +34,16 @@ try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark
   <div class="ring"></div>
   <div class="wrap">
     <div>
-      <h1>Bugun o‘qigan bola, ertaga <span id="rot">yetakchi bo‘ladi</span></h1>
-      <p>Lider xususiy maktabi — chuqur bilim, kuchli xarakter va dunyoga ochiq fikrlash. Kichik sinflar, har bir o‘quvchiga alohida e’tibor.</p>
+      <h1><i data-i="hero.pre">Bugun o‘qigan bola, ertaga</i> <span id="rot">yetakchi bo‘ladi</span></h1>
+      <p data-i="hero.p">Lider xususiy maktabi — chuqur bilim, kuchli xarakter va dunyoga ochiq fikrlash. Kichik sinflar, har bir o‘quvchiga alohida e’tibor.</p>
       <div class="cta">
-        <a class="btn gold" href="#qabul">Qabulga ariza</a>
-        <a class="btn ghost" href="#kampus">Kampusni ko‘rish</a>
+        <a class="btn gold" href="#qabul" data-i="hero.cta1">Qabulga ariza</a>
+        <a class="btn ghost" href="#kampus" data-i="hero.cta2">Kampusni ko‘rish</a>
       </div>
       <div class="stats">
-        <div><b data-n="15">0</b><small>yillik tajriba</small></div>
-        <div><b data-n="12">0</b><small>o‘quvchi sinfda (o‘rtacha)</small></div>
-        <div><b data-n="98">0</b><small>% oliygohga kirish</small></div>
+        <div><b data-n="15">0</b><small data-i="stat1">yillik tajriba</small></div>
+        <div><b data-n="12">0</b><small data-i="stat2">o‘quvchi sinfda (o‘rtacha)</small></div>
+        <div><b data-n="98">0</b><small data-i="stat3">% oliygohga kirish</small></div>
       </div>
     </div>
     <div class="vbox">
@@ -50,22 +54,22 @@ try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark
 </header>
 
 <section id="yangiliklar" hidden><div class="wrap">
-  <h2>Maktab yangiliklari</h2>
-  <p class="lead">So‘nggi e’lonlar va voqealar.</p>
+  <h2 data-i="news.h2">Maktab yangiliklari</h2>
+  <p class="lead" data-i="news.lead">So‘nggi e’lonlar va voqealar.</p>
   <div class="news" id="newsList"></div>
 </div></section>
 
 <section id="manzil"><div class="wrap">
-  <h2>Bizni toping</h2>
-  <p class="lead">Tugmani bosing — telefoningizdagi xarita ilovasi hozirgi joyingizdan maktabgacha marshrutni o‘zi chizadi.</p>
+  <h2 data-i="loc.h2">Bizni toping</h2>
+  <p class="lead" data-i="loc.lead">Tugmani bosing — telefoningizdagi xarita ilovasi hozirgi joyingizdan maktabgacha marshrutni o‘zi chizadi.</p>
   <div class="loc">
     <div class="card">
-      <h3>Lider xususiy maktabi</h3>
+      <h3 data-i="loc.name">Lider xususiy maktabi</h3>
       <p id="addr"></p>
       <div class="btns">
-        <a class="btn gold" id="navG" target="_blank" rel="noopener">Yo‘nalishni olish (Google Maps)</a>
-        <a class="btn line" id="navY" target="_blank" rel="noopener">Yandex Maps orqali ochish</a>
-        <button class="btn line" id="navMe" type="button">Mening joyimdan masofa</button>
+        <a class="btn gold" id="navG" target="_blank" rel="noopener" data-i="loc.g">Yo‘nalishni olish (Google Maps)</a>
+        <a class="btn line" id="navY" target="_blank" rel="noopener" data-i="loc.y">Yandex Maps orqali ochish</a>
+        <button class="btn line" id="navMe" type="button" data-i="loc.me">Mening joyimdan masofa</button>
       </div>
       <div id="locmsg" role="status"></div>
     </div>
@@ -74,94 +78,88 @@ try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark
 </div></section>
 
 <section id="galereya"><div class="wrap">
-  <h2>Maktab hayoti</h2>
-  <p class="lead">Dars, tanaffus va to‘garaklardan lavhalar. Rasmni bosing — kattalashadi.</p>
+  <h2 data-i="gal.h2">Maktab hayoti</h2>
+  <p class="lead" data-i="gal.lead">Dars, tanaffus va to‘garaklardan lavhalar. Rasmni bosing — kattalashadi.</p>
   <div class="grid" id="gal"></div>
 </div></section>
 
-<div id="lb" role="dialog" aria-modal="true"><button aria-label="Yopish">×</button><div id="lbc"></div></div>
+<div id="lb" role="dialog" aria-modal="true"><button data-ia="aria.close" aria-label="Yopish">×</button><div id="lbc"></div></div>
 
 <section id="kampus"><div class="wrap">
-  <h2>Virtual kampus</h2>
-  <p class="lead">Xonani tanlang va u haqida bilib oling.</p>
+  <h2 data-i="campus.h2">Virtual kampus</h2>
+  <p class="lead" data-i="campus.lead">Xonani tanlang va u haqida bilib oling.</p>
   <div class="campus">
     <svg viewBox="0 0 600 420" role="group" aria-label="Kampus xaritasi">
       <rect x="10" y="10" width="580" height="400" rx="16" fill="none" stroke="rgba(255,255,255,.12)" stroke-dasharray="6 6"/>
       <g id="rooms">
-        <rect class="room" data-k="sinf" tabindex="0" x="30" y="30" width="250" height="130" rx="12"/><text class="rt" x="155" y="100">Sinfxonalar</text>
-        <rect class="room" data-k="lab" tabindex="0" x="300" y="30" width="130" height="130" rx="12"/><text class="rt" x="365" y="100">Laboratoriya</text>
-        <rect class="room" data-k="kutub" tabindex="0" x="450" y="30" width="120" height="130" rx="12"/><text class="rt" x="510" y="100">Kutubxona</text>
-        <rect class="room" data-k="zal" tabindex="0" x="30" y="250" width="250" height="140" rx="12"/><text class="rt" x="155" y="325">Sport zali</text>
-        <rect class="room" data-k="it" tabindex="0" x="300" y="250" width="130" height="140" rx="12"/><text class="rt" x="365" y="325">IT markazi</text>
-        <rect class="room" data-k="oshxona" tabindex="0" x="450" y="250" width="120" height="140" rx="12"/><text class="rt" x="510" y="325">Oshxona</text>
+        <rect class="room" data-k="sinf" tabindex="0" x="30" y="30" width="250" height="130" rx="12"/><text class="rt" x="155" y="100" data-i="r.sinf">Sinfxonalar</text>
+        <rect class="room" data-k="lab" tabindex="0" x="300" y="30" width="130" height="130" rx="12"/><text class="rt" x="365" y="100" data-i="r.lab">Laboratoriya</text>
+        <rect class="room" data-k="kutub" tabindex="0" x="450" y="30" width="120" height="130" rx="12"/><text class="rt" x="510" y="100" data-i="r.kutub">Kutubxona</text>
+        <rect class="room" data-k="zal" tabindex="0" x="30" y="250" width="250" height="140" rx="12"/><text class="rt" x="155" y="325" data-i="r.zal">Sport zali</text>
+        <rect class="room" data-k="it" tabindex="0" x="300" y="250" width="130" height="140" rx="12"/><text class="rt" x="365" y="325" data-i="r.it">IT markazi</text>
+        <rect class="room" data-k="oshxona" tabindex="0" x="450" y="250" width="120" height="140" rx="12"/><text class="rt" x="510" y="325" data-i="r.oshxona">Oshxona</text>
       </g>
-      <text x="300" y="215" text-anchor="middle" fill="#E7C777" font-size="12" font-family="Manrope">— markaziy hovli —</text>
+      <text x="300" y="215" text-anchor="middle" fill="#E7C777" font-size="12" font-family="Manrope" data-i="campus.yard">— markaziy hovli —</text>
     </svg>
     <div class="info" id="info" aria-live="polite"></div>
   </div>
 </div></section>
 
 <section id="jamoa"><div class="wrap">
-  <h2>Odamlar va loyihalar</h2>
+  <h2 data-i="team.h2">Odamlar va loyihalar</h2>
   <div class="panel" id="panel"></div>
   <div class="tabs" role="tablist">
-    <button class="tab" role="tab" aria-selected="true" data-t="team">O‘qituvchilar</button>
-    <button class="tab" role="tab" aria-selected="false" data-t="proj">O‘quvchi loyihalari</button>
+    <button class="tab" role="tab" aria-selected="true" data-t="team" data-i="tab.team">O‘qituvchilar</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="proj" data-i="tab.proj">O‘quvchi loyihalari</button>
   </div>
   <div class="cards" id="team"></div>
   <div class="cards" id="proj" hidden></div>
 </div></section>
 
 <section id="video"><div class="wrap">
-  <h2>Video-taqdimotlar</h2>
-  <p class="lead">Maktab haqida 1–2 daqiqalik videolar.</p>
+  <h2 data-i="vid.h2">Video-taqdimotlar</h2>
+  <p class="lead" data-i="vid.lead">Maktab haqida 1–2 daqiqalik videolar.</p>
   <div class="vids" id="vids"></div>
 </div></section>
 
 <section id="qabul"><div class="wrap">
-  <h2>Qabulga ariza</h2>
-  <p class="lead">Ma’lumotlarni qoldiring, maktab xodimlari siz bilan bog‘lanib, qabul haqida batafsil aytib beradi.</p>
+  <h2 data-i="q.h2">Qabulga ariza</h2>
+  <p class="lead" data-i="q.lead">Ma’lumotlarni qoldiring, maktab xodimlari siz bilan bog‘lanib, qabul haqida batafsil aytib beradi.</p>
   <div class="qgrid">
     <form id="aform" class="qform" novalidate>
       <div class="two">
-        <label>Ota-ona ismi
-          <input type="text" name="parent" maxlength="80" autocomplete="name" placeholder="Ism va familiya">
+        <label><span data-i="q.parent">Ota-ona ismi</span>
+          <input type="text" name="parent" maxlength="80" autocomplete="name" data-ip="q.name.ph">
         </label>
-        <label>Telefon raqam
+        <label><span data-i="q.phone">Telefon raqam</span>
           <input type="text" name="phone" maxlength="20" autocomplete="tel" inputmode="tel" placeholder="+998 90 123 45 67">
         </label>
       </div>
       <div class="two">
-        <label>Farzandingiz ismi
-          <input type="text" name="child" maxlength="80" placeholder="Ism va familiya">
+        <label><span data-i="q.child">Farzandingiz ismi</span>
+          <input type="text" name="child" maxlength="80" data-ip="q.name.ph">
         </label>
-        <label>Qaysi sinfga?
-          <select name="grade">
-            <option value="">Tanlang</option>
-            <option>Tayyorlov</option>
-            <option>1-sinf</option><option>2-sinf</option><option>3-sinf</option><option>4-sinf</option>
-            <option>5-sinf</option><option>6-sinf</option><option>7-sinf</option><option>8-sinf</option>
-            <option>9-sinf</option><option>10-sinf</option><option>11-sinf</option>
-          </select>
+        <label><span data-i="q.grade">Qaysi sinfga?</span>
+          <select name="grade" id="grade"></select>
         </label>
       </div>
-      <label>Izoh (ixtiyoriy)
-        <textarea name="message" maxlength="500" placeholder="Savollaringiz yoki qulay vaqtni yozing"></textarea>
+      <label><span data-i="q.msg">Izoh (ixtiyoriy)</span>
+        <textarea name="message" maxlength="500" data-ip="q.msg.ph"></textarea>
       </label>
       <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <button class="btn gold" type="submit" name="send">Ariza yuborish</button>
+      <button class="btn gold" type="submit" name="send" data-i="q.send">Ariza yuborish</button>
       <div class="qmsg" id="amsg" role="status" aria-live="polite"></div>
     </form>
 
     <ol class="steps">
-      <li><div><b>Ariza qoldiring</b><span>Shaklni to‘ldiring, bir daqiqa vaqt oladi.</span></div></li>
-      <li><div><b>Biz qo‘ng‘iroq qilamiz</b><span>Xodimlarimiz siz bilan bog‘lanib, savollarga javob beradi.</span></div></li>
-      <li><div><b>Tanishuv suhbati</b><span>Maktabni ko‘rasiz, o‘qituvchilar bilan tanishasiz.</span></div></li>
+      <li><div><b data-i="q.s1">Ariza qoldiring</b><span data-i="q.s1d">Shaklni to‘ldiring, bir daqiqa vaqt oladi.</span></div></li>
+      <li><div><b data-i="q.s2">Biz qo‘ng‘iroq qilamiz</b><span data-i="q.s2d">Xodimlarimiz siz bilan bog‘lanib, savollarga javob beradi.</span></div></li>
+      <li><div><b data-i="q.s3">Tanishuv suhbati</b><span data-i="q.s3d">Maktabni ko‘rasiz, o‘qituvchilar bilan tanishasiz.</span></div></li>
     </ol>
   </div>
 </div></section>
 
-<footer><div class="wrap"><b>Lider xususiy maktabi</b><p>© <span id="yr"></span> · Barcha huquqlar himoyalangan</p></div></footer>
+<footer><div class="wrap"><b data-i="brand">Lider xususiy maktabi</b><p>© <span id="yr"></span> · <span data-i="foot">Barcha huquqlar himoyalangan</span></p></div></footer>
 
 <script src="script.js"></script>
 <script type="module" src="members.js"></script>
