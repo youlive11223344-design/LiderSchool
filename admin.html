@@ -26,6 +26,8 @@ body{background:var(--bg2);min-height:100vh}
 .sc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px}
 .sc b{display:block;font:700 2rem var(--serif);color:var(--head)}
 .sc span{color:var(--mute);font-size:.85rem}
+.tabs{flex-wrap:wrap}
+.pane{padding:0}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
 .toolbar input,.toolbar select{padding:11px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font:500 .95rem var(--sans)}
 .toolbar input{flex:1;min-width:200px}
@@ -43,8 +45,27 @@ tr:last-child td{border-bottom:0}
 .pill.ok{background:rgba(46,158,91,.15);color:#2e9e5b}
 .pill.bad{background:rgba(214,69,69,.15);color:#d64545}
 .ac{display:flex;gap:6px;flex-wrap:wrap}
-.empty{padding:36px;text-align:center;color:var(--mute)}
+.empty{padding:36px;text-align:center;color:var(--mute);grid-column:1/-1}
 .cards .t .mini{margin-top:14px}
+.af{background:var(--card);border:1px solid var(--border);border-left:6px solid var(--gold);border-radius:20px;padding:24px;display:grid;gap:12px;max-width:640px;margin-bottom:24px}
+.af h3{font-size:1.25rem;color:var(--head)}
+.af input[type=text],.af textarea{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font:500 .95rem var(--sans)}
+.af input[type=file]{color:var(--mute);font-size:.9rem}
+.af textarea{min-height:110px;resize:vertical}
+.af input:focus,.af textarea:focus{outline:none;border-color:var(--gold)}
+.af .btn{justify-self:start}
+.msg{min-height:1.3em;font-size:.88rem;color:#d64545}
+.msg.ok{color:#2e9e5b}
+.thumb{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px;display:block;margin-bottom:12px}
+.t.app.new{border-color:var(--gold)}
+.t.app .row{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.t.app a{color:var(--accent);font-weight:700;text-decoration:none}
+.t.app select{padding:6px 10px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font:600 .82rem var(--sans)}
+.gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.gl .gi{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px}
+.gl .gi img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block}
+.gl .gi p{margin:8px 0 0;font-size:.88rem}
+.gl .gi .mini{margin-top:10px}
 #deny{max-width:520px;margin:12vh auto;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px}
 #deny h1{font-size:1.6rem;color:var(--head);margin-bottom:10px}
 #deny code{display:block;margin:14px 0;padding:10px;border-radius:10px;background:var(--chip);color:var(--accent);word-break:break-all;font-size:.85rem}
@@ -58,7 +79,7 @@ tr:last-child td{border-bottom:0}
 <div id="deny" hidden>
   <h1>Ruxsat yo‘q</h1>
   <p class="lead" style="margin:0 auto 6px">Bu sahifa faqat administratorlar uchun.</p>
-  <p class="muted" style="color:var(--mute);font-size:.88rem">Agar siz sayt egasi bo‘lsangiz, quyidagi UID ni Firestore'dagi <b>admins</b> to‘plamiga hujjat ID sifatida qo‘shing:</p>
+  <p style="color:var(--mute);font-size:.88rem">Agar siz sayt egasi bo‘lsangiz, quyidagi UID ni Firestore'dagi <b>admins</b> to‘plamiga hujjat ID sifatida qo‘shing:</p>
   <code id="uid"></code>
   <a class="btn gold sm" href="index.html">Saytga qaytish</a>
 </div>
@@ -78,11 +99,15 @@ tr:last-child td{border-bottom:0}
 
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" aria-selected="true" data-t="users">Foydalanuvchilar</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="apps" id="tabApps">Arizalar</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="news">Yangiliklar</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="gallery">Galereya</button>
       <button class="tab" role="tab" aria-selected="false" data-t="teachers">O‘qituvchi kartalari</button>
       <button class="tab" role="tab" aria-selected="false" data-t="projects">Loyihalar</button>
     </div>
 
-    <section id="vUsers" style="padding:0">
+    <!-- Foydalanuvchilar -->
+    <section class="pane" data-p="users">
       <div class="toolbar">
         <input type="text" id="q" placeholder="Ism, email yoki telefon bo‘yicha qidirish…">
         <select id="rf">
@@ -101,8 +126,47 @@ tr:last-child td{border-bottom:0}
       </div>
     </section>
 
-    <section id="vTeachers" style="padding:0" hidden><div class="cards" id="tcards"></div></section>
-    <section id="vProjects" style="padding:0" hidden><div class="cards" id="pcards"></div></section>
+    <!-- Qabul arizalari -->
+    <section class="pane" data-p="apps" hidden>
+      <div class="toolbar">
+        <select id="af">
+          <option value="">Barcha arizalar</option>
+          <option value="new">Yangi</option>
+          <option value="seen">Ko‘rildi</option>
+          <option value="done">Bog‘lanildi</option>
+        </select>
+        <button class="btn gold sm" id="csvApps" type="button">Excel (CSV)</button>
+      </div>
+      <div class="cards" id="appList"></div>
+    </section>
+
+    <!-- Yangiliklar -->
+    <section class="pane" data-p="news" hidden>
+      <form class="af" id="nf" novalidate>
+        <h3>Yangi yangilik qo‘shish</h3>
+        <input type="text" id="nt" maxlength="120" placeholder="Sarlavha">
+        <textarea id="nb" maxlength="2000" placeholder="Matn"></textarea>
+        <label style="font-size:.85rem;color:var(--mute)">Rasm (ixtiyoriy)<br><input type="file" id="ni" accept="image/*"></label>
+        <button class="btn gold sm" type="submit">E’lon qilish</button>
+        <div class="msg" id="nm" role="status"></div>
+      </form>
+      <div class="cards" id="newsList"></div>
+    </section>
+
+    <!-- Galereya -->
+    <section class="pane" data-p="gallery" hidden>
+      <form class="af" id="gf" novalidate>
+        <h3>Galereyaga rasm qo‘shish</h3>
+        <input type="file" id="gi" accept="image/*">
+        <input type="text" id="gc" maxlength="80" placeholder="Rasm tagidagi yozuv (masalan: Bitiruv kuni)">
+        <button class="btn gold sm" type="submit">Qo‘shish</button>
+        <div class="msg" id="gm" role="status"></div>
+      </form>
+      <div class="gl" id="galList"></div>
+    </section>
+
+    <section class="pane" data-p="teachers" hidden><div class="cards" id="tcards"></div></section>
+    <section class="pane" data-p="projects" hidden><div class="cards" id="pcards"></div></section>
   </main>
 </div>
 

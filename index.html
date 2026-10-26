@@ -19,8 +19,10 @@ try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark
   <button id="theme" type="button" aria-label="Tun/Kun rejimi">🌙</button>
   <button id="burger" aria-label="Menyu">☰</button>
   <ul id="menu">
+    <li id="navNews" hidden><a href="#yangiliklar">Yangiliklar</a></li>
     <li><a href="#manzil">Manzil</a></li><li><a href="#galereya">Galereya</a></li>
     <li><a href="#kampus">Kampus</a></li><li><a href="#jamoa">Jamoa</a></li><li><a href="#video">Video</a></li>
+    <li><a href="#qabul">Qabul</a></li>
   </ul>
 </div></nav>
 
@@ -31,7 +33,7 @@ try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark
       <h1>Bugun o‘qigan bola, ertaga <span id="rot">yetakchi bo‘ladi</span></h1>
       <p>Lider xususiy maktabi — chuqur bilim, kuchli xarakter va dunyoga ochiq fikrlash. Kichik sinflar, har bir o‘quvchiga alohida e’tibor.</p>
       <div class="cta">
-        <a class="btn gold" href="#manzil">Maktabga yo‘l olish</a>
+        <a class="btn gold" href="#qabul">Qabulga ariza</a>
         <a class="btn ghost" href="#kampus">Kampusni ko‘rish</a>
       </div>
       <div class="stats">
@@ -46,6 +48,12 @@ try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark
     </div>
   </div>
 </header>
+
+<section id="yangiliklar" hidden><div class="wrap">
+  <h2>Maktab yangiliklari</h2>
+  <p class="lead">So‘nggi e’lonlar va voqealar.</p>
+  <div class="news" id="newsList"></div>
+</div></section>
 
 <section id="manzil"><div class="wrap">
   <h2>Bizni toping</h2>
@@ -110,9 +118,53 @@ try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:dark
   <div class="vids" id="vids"></div>
 </div></section>
 
+<section id="qabul"><div class="wrap">
+  <h2>Qabulga ariza</h2>
+  <p class="lead">Ma’lumotlarni qoldiring, maktab xodimlari siz bilan bog‘lanib, qabul haqida batafsil aytib beradi.</p>
+  <div class="qgrid">
+    <form id="aform" class="qform" novalidate>
+      <div class="two">
+        <label>Ota-ona ismi
+          <input type="text" name="parent" maxlength="80" autocomplete="name" placeholder="Ism va familiya">
+        </label>
+        <label>Telefon raqam
+          <input type="text" name="phone" maxlength="20" autocomplete="tel" inputmode="tel" placeholder="+998 90 123 45 67">
+        </label>
+      </div>
+      <div class="two">
+        <label>Farzandingiz ismi
+          <input type="text" name="child" maxlength="80" placeholder="Ism va familiya">
+        </label>
+        <label>Qaysi sinfga?
+          <select name="grade">
+            <option value="">Tanlang</option>
+            <option>Tayyorlov</option>
+            <option>1-sinf</option><option>2-sinf</option><option>3-sinf</option><option>4-sinf</option>
+            <option>5-sinf</option><option>6-sinf</option><option>7-sinf</option><option>8-sinf</option>
+            <option>9-sinf</option><option>10-sinf</option><option>11-sinf</option>
+          </select>
+        </label>
+      </div>
+      <label>Izoh (ixtiyoriy)
+        <textarea name="message" maxlength="500" placeholder="Savollaringiz yoki qulay vaqtni yozing"></textarea>
+      </label>
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button class="btn gold" type="submit" name="send">Ariza yuborish</button>
+      <div class="qmsg" id="amsg" role="status" aria-live="polite"></div>
+    </form>
+
+    <ol class="steps">
+      <li><div><b>Ariza qoldiring</b><span>Shaklni to‘ldiring, bir daqiqa vaqt oladi.</span></div></li>
+      <li><div><b>Biz qo‘ng‘iroq qilamiz</b><span>Xodimlarimiz siz bilan bog‘lanib, savollarga javob beradi.</span></div></li>
+      <li><div><b>Tanishuv suhbati</b><span>Maktabni ko‘rasiz, o‘qituvchilar bilan tanishasiz.</span></div></li>
+    </ol>
+  </div>
+</div></section>
+
 <footer><div class="wrap"><b>Lider xususiy maktabi</b><p>© <span id="yr"></span> · Barcha huquqlar himoyalangan</p></div></footer>
 
 <script src="script.js"></script>
 <script type="module" src="members.js"></script>
+<script type="module" src="site.js"></script>
 </body>
 </html>

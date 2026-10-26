@@ -1,7 +1,7 @@
-import { auth, db } from "../firebase.js";
+import { auth, db } from "./firebase.js";
 import {
   createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup,
-  GoogleAuthProvider, updateProfile, onAuthStateChanged
+  GoogleAuthProvider, updateProfile, onAuthStateChanged, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -9,6 +9,8 @@ const $ = s => document.querySelector(s);
 const msg = (t, ok) => { const m = $('#msg'); m.textContent = t; m.className = ok ? 'ok' : ''; };
 const NEXT = "index.html";
 let mode = 'login', busy = false, holding = false;
+
+auth.languageCode = 'uz';
 
 const go = () => { msg('Kirdingiz! Sahifa ochilmoqda…', true); location.replace(NEXT); };
 
@@ -49,6 +51,7 @@ const ERR = {
   'auth/user-not-found': "Bunday akkaunt yo‘q. «Ro‘yxatdan o‘tish» ni tanlang.",
   'auth/email-already-in-use': "Bu email yoki telefon bilan akkaunt bor. «Kirish» orqali kiring.",
   'auth/weak-password': "Parol juda oddiy: kamida 6 ta belgi kiriting.",
+  'auth/invalid-email': "Email manzil noto‘g‘ri.",
   'auth/too-many-requests': "Juda ko‘p urinish. Birozdan keyin qayta urinib ko‘ring.",
   'auth/network-request-failed': "Internet bilan aloqa yo‘q.",
   'auth/popup-closed-by-user': "Google oynasi yopildi.",
@@ -64,6 +67,7 @@ function setMode(m) {
   document.querySelectorAll('.sw button').forEach(b => b.setAttribute('aria-selected', b.dataset.m === m));
   const reg = m === 'reg';
   $('#nameW').hidden = !reg; $('#regW').hidden = !reg;
+  $('#forgot').hidden = reg;
   $('#ttl').textContent = reg ? "Ro‘yxatdan o‘tish" : "Kirish";
   $('#sub').textContent = reg ? "Yangi akkaunt yarating: ma’lumotlarni kiriting va parol o‘ylab toping." : "Akkauntingiz bo‘lsa, kirish uchun login va parolni kiriting.";
   $('#submit').textContent = reg ? "Akkaunt yaratish" : "Kirish";
@@ -71,6 +75,23 @@ function setMode(m) {
   msg('');
 }
 document.querySelectorAll('.sw button').forEach(b => b.onclick = () => setMode(b.dataset.m));
+
+// ---------- Parolni unutdim ----------
+$('#forgot').onclick = async e => {
+  e.preventDefault();
+  if (busy) return;
+  const raw = $('#id').value.trim();
+  if (!raw) return msg("Avval yuqoridagi maydonga email manzilingizni yozing.");
+  if (!raw.includes('@')) return msg("Telefon raqam bilan ro‘yxatdan o‘tganlar parolni o‘zi tiklay olmaydi. Maktab ma’muriyatiga murojaat qiling.");
+  const id = parseId(raw);
+  if (!id) return msg("Email manzil noto‘g‘ri.");
+  busy = true; msg('Yuborilmoqda…', true);
+  try {
+    await sendPasswordResetEmail(auth, id.email);
+    msg("Agar bu email bilan akkaunt mavjud bo‘lsa, parolni tiklash havolasi yuborildi. «Spam» papkasini ham tekshiring.", true);
+  } catch (err) { showErr(err); }
+  finally { busy = false; }
+};
 
 // ---------- Shartlar ----------
 document.querySelectorAll('.tl').forEach(a => a.onclick = e => { e.preventDefault(); $('#terms').showModal(); });
@@ -120,7 +141,6 @@ $('#google').onclick = async () => {
     const { user } = await signInWithPopup(auth, new GoogleAuthProvider());
     const snap = await getDoc(doc(db, 'users', user.uid));
     if (snap.exists()) { go(); return; }
-    // birinchi marta: rol va shartlarni so'raymiz
     holding = true;
     $('#f').hidden = true; document.querySelector('.sw').hidden = true;
     $('.or').hidden = true; $('#google').hidden = true;

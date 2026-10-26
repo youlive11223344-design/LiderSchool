@@ -11,7 +11,7 @@
   --tab-on-bg:#C9A24A;--tab-on-fg:#0A1B45;color-scheme:dark
 }
 [data-theme=dark] #map{filter:invert(.92) hue-rotate(180deg) brightness(.95) contrast(.9)}
-[data-theme=dark] .g img,[data-theme=dark] .av img{filter:brightness(.88)}
+[data-theme=dark] .g img,[data-theme=dark] .av img,[data-theme=dark] .nc img{filter:brightness(.88)}
 body,.card,.t,.vc,.tab{transition:background-color .3s,color .3s,border-color .3s}
 
 *{box-sizing:border-box;margin:0}
@@ -26,6 +26,7 @@ h2{font-size:clamp(2rem,4.5vw,3.2rem);color:var(--head);margin-bottom:12px}
 .lead{color:var(--mute);max-width:60ch;margin-bottom:40px}
 .btn{display:inline-block;padding:14px 26px;border-radius:999px;font-weight:700;text-decoration:none;border:2px solid var(--gold);cursor:pointer;font:700 1rem var(--sans);transition:transform .2s,background .2s}
 .btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.6;cursor:wait;transform:none}
 .gold{background:var(--gold);color:#0A1B45}.gold:hover{background:var(--gold2)}
 .ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
 .line{background:transparent;color:var(--head);border-color:var(--head)}
@@ -35,9 +36,10 @@ nav{position:fixed;inset:0 0 auto;z-index:50;background:rgba(10,27,69,.88);backd
 [data-theme=dark] nav{background:rgba(6,13,34,.9)}
 nav .wrap{display:flex;align-items:center;justify-content:flex-start;height:64px}
 .logo{order:0;font:700 1.3rem var(--serif);color:#fff;text-decoration:none}.logo b{color:var(--gold)}
-nav ul{order:1;display:flex;gap:24px;list-style:none;padding:0;margin:0 auto}
+nav ul{order:1;display:flex;gap:22px;list-style:none;padding:0;margin:0 auto}
 nav ul a{color:#dbe4ff;text-decoration:none;font-size:.92rem}nav ul a:hover{color:var(--gold2)}
 #burger{display:none;background:none;border:0;color:#fff;font-size:1.6rem}
+@media(max-width:1060px) and (min-width:821px){nav ul{gap:14px}nav ul a{font-size:.84rem}}
 
 /* KIRISH / CHIQISH TUGMALARI (nav ichida) */
 #authLi{order:2;display:flex;align-items:center;gap:8px}
@@ -93,6 +95,18 @@ nav ul a{color:#dbe4ff;text-decoration:none;font-size:.92rem}nav ul a:hover{colo
 .stats{display:flex;gap:36px;margin-top:40px;flex-wrap:wrap}
 .stats div b{display:block;font:700 2rem var(--serif);color:var(--gold2)}.stats small{color:#a9b9e8}
 @media(max-width:860px){.hero .wrap{grid-template-columns:1fr}.vbox{max-width:380px;margin:auto}}
+
+/* YANGILIKLAR */
+.news{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px}
+.nc{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,transform .2s}
+.nc:hover{border-color:var(--gold);transform:translateY(-3px)}
+.nc img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
+.nc .nb{padding:20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.nc time{font-size:.78rem;color:var(--mute);font-weight:700;letter-spacing:.04em}
+.nc h3{font-size:1.25rem;color:var(--head)}
+.nc p{font-size:.93rem;white-space:pre-line;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.nc p.open{display:block;-webkit-line-clamp:unset;overflow:visible}
+.nc .more{align-self:flex-start;background:none;border:0;padding:0;margin-top:auto;color:var(--accent);font:700 .88rem var(--sans);cursor:pointer}
 
 /* LOCATION */
 #manzil{background:var(--bg2)}
@@ -172,6 +186,25 @@ nav ul a{color:#dbe4ff;text-decoration:none;font-size:.92rem}nav ul a:hover{colo
   display:block;
 }
 .vc div.txt{padding:18px 22px}.vc h3{font-size:1.2rem;color:var(--head)}.vc p{font-size:.9rem;color:var(--mute)}
+
+/* QABUL ARIZASI */
+.qgrid{display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:start}
+.qform{position:relative;background:var(--card);border:1px solid var(--border);border-left:6px solid var(--gold);border-radius:20px;padding:28px;display:grid;gap:16px}
+.qform .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.qform label{display:grid;gap:6px;font-weight:700;font-size:.85rem;color:var(--head)}
+.qform input,.qform select,.qform textarea{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font:500 .95rem var(--sans)}
+.qform textarea{min-height:96px;resize:vertical}
+.qform input:focus,.qform select:focus,.qform textarea:focus{outline:none;border-color:var(--gold)}
+.qform .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.qform .btn{justify-self:start}
+.qmsg{min-height:1.3em;font-size:.9rem;color:#d64545}
+.qmsg.ok{color:#2e9e5b}
+.steps{list-style:none;padding:0;display:grid;gap:22px;counter-reset:s}
+.steps li{display:flex;gap:16px;align-items:flex-start}
+.steps li::before{counter-increment:s;content:counter(s);flex:none;width:40px;height:40px;border-radius:50%;background:var(--gold);color:#0A1B45;display:grid;place-items:center;font:700 1.1rem var(--serif)}
+.steps b{display:block;font-family:var(--serif);font-size:1.2rem;color:var(--head)}
+.steps span{color:var(--mute);font-size:.92rem}
+@media(max-width:860px){.qgrid{grid-template-columns:1fr}.qform .two{grid-template-columns:1fr}}
 
 footer{background:var(--navy);color:#b9c8f0;padding:48px 0;text-align:center;font-size:.9rem}
 footer b{color:var(--gold2);font-family:var(--serif);font-size:1.4rem}
