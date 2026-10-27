@@ -15,7 +15,7 @@
 body,.card,.t,.vc,.tab{transition:background-color .3s,color .3s,border-color .3s}
 
 *{box-sizing:border-box;margin:0}
-html{scroll-behavior:smooth;scroll-padding-top:70px}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
 body{font-family:var(--sans);color:var(--text);background:var(--bg);line-height:1.6;overflow-x:hidden}
 h1,h2,h3{font-family:var(--serif);line-height:1.1;letter-spacing:-.01em}
 a{color:inherit}
@@ -28,13 +28,14 @@ h2{font-size:clamp(2rem,4.5vw,3.2rem);color:var(--head);margin-bottom:12px}
 .btn:hover{transform:translateY(-2px)}
 .btn:disabled{opacity:.6;cursor:wait;transform:none}
 .gold{background:var(--gold);color:#0A1B45}.gold:hover{background:var(--gold2)}
-.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
+.ghost{background:rgba(255,255,255,.1);-webkit-backdrop-filter:blur(12px) saturate(160%);backdrop-filter:blur(12px) saturate(160%);color:#fff;border-color:rgba(255,255,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.ghost:hover{background:rgba(255,255,255,.18)}
 .line{background:transparent;color:var(--head);border-color:var(--head)}
 
-/* NAV: chapda logo | o'rtada menyu | o'ngda Kirish + switch */
-nav{position:fixed;inset:0 0 auto;z-index:50;background:rgba(10,27,69,.88);backdrop-filter:blur(10px)}
-[data-theme=dark] nav{background:rgba(6,13,34,.9)}
-nav .wrap{display:flex;align-items:center;justify-content:flex-start;height:64px}
+/* NAV: suzuvchi shisha panel (chapda logo | o'rtada menyu | o'ngda Kirish + switch) */
+nav{position:fixed;top:12px;left:0;right:0;z-index:50;pointer-events:none}
+nav .wrap{pointer-events:auto;position:relative;display:flex;align-items:center;justify-content:flex-start;height:56px;padding:0 10px 0 24px;border-radius:999px;background:rgba(10,27,69,.72);-webkit-backdrop-filter:blur(18px) saturate(170%);backdrop-filter:blur(18px) saturate(170%);border:1px solid rgba(255,255,255,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 10px 30px rgba(3,10,30,.28)}
+[data-theme=dark] nav .wrap{background:rgba(6,13,34,.72);border-color:rgba(255,255,255,.14)}
 .logo{order:0;font:700 1.3rem var(--serif);color:#fff;text-decoration:none}.logo b{color:var(--gold)}
 nav ul{order:1;display:flex;gap:22px;list-style:none;padding:0;margin:0 auto}
 nav ul a{color:#dbe4ff;text-decoration:none;font-size:.92rem}nav ul a:hover{color:var(--gold2)}
@@ -69,18 +70,24 @@ nav ul a{color:#dbe4ff;text-decoration:none;font-size:.92rem}nav ul a:hover{colo
     radial-gradient(1.2px 1.2px at 33px 24px,#fff,transparent)}
 
 @media(max-width:820px){
+  nav{top:8px}
+  nav .wrap{height:52px;padding:0 8px 0 18px}
   #burger{display:block;order:4;margin-left:6px}
   #authLi{margin-left:auto}
   #authLi a{padding:7px 14px;font-size:.85rem}
   #authLi a.nm{max-width:90px}
-  nav ul{position:absolute;top:64px;left:0;right:0;margin:0;background:var(--navy);flex-direction:column;padding:20px 4%;display:none}
+  nav ul{position:absolute;top:62px;left:0;right:0;margin:0;background:rgba(10,27,69,.94);border:1px solid rgba(255,255,255,.2);border-radius:22px;box-shadow:0 20px 50px rgba(3,10,30,.4);flex-direction:column;padding:16px 22px;display:none}
+  [data-theme=dark] nav ul{background:rgba(6,13,34,.96)}
   nav ul.open{display:flex}
 }
 
 /* HERO */
 .hero{min-height:100vh;padding:120px 0 80px;background:radial-gradient(900px 500px at 85% 10%,#2a4fb8 0,transparent 60%),linear-gradient(160deg,var(--navy),#0d2566);color:#fff;display:flex;align-items:center;position:relative;overflow:hidden}
 [data-theme=dark] .hero{background:radial-gradient(900px 500px at 85% 10%,#1b337a 0,transparent 60%),linear-gradient(160deg,var(--navy),#0a1b45)}
-.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.hero::before{width:280px;height:280px;left:6%;bottom:4%;background:radial-gradient(circle,rgba(201,162,74,.7),transparent 68%)}
+.hero::after{width:320px;height:320px;right:34%;top:8%;background:radial-gradient(circle,rgba(91,134,255,.6),transparent 68%)}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
 .hero h1{font-size:clamp(2.6rem,6.5vw,5rem)}
 .hero h1 span{display:block;color:var(--gold2)}
 #rot{display:inline-block;border-bottom:3px solid var(--gold);transition:opacity .4s}
@@ -90,11 +97,12 @@ nav ul a{color:#dbe4ff;text-decoration:none;font-size:.92rem}nav ul a:hover{colo
 .vbox video{width:100%;height:100%;object-fit:cover;display:block}
 .vbox .ph{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:30px;color:#c6d3f5;font-size:.9rem}
 .vbox .ph b{display:block;font:700 4rem var(--serif);color:var(--gold)}
-.ring{position:absolute;width:520px;height:520px;border:1px solid rgba(201,162,74,.25);border-radius:50%;right:-120px;bottom:-200px;animation:spin 40s linear infinite}
+.ring{position:absolute;width:520px;height:520px;border:1px solid rgba(201,162,74,.35);border-radius:50%;right:-120px;bottom:-200px;animation:spin 40s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.stats{display:flex;gap:36px;margin-top:40px;flex-wrap:wrap}
-.stats div b{display:block;font:700 2rem var(--serif);color:var(--gold2)}.stats small{color:#a9b9e8}
-@media(max-width:860px){.hero .wrap{grid-template-columns:1fr}.vbox{max-width:380px;margin:auto}}
+.stats{display:flex;gap:14px;margin-top:40px;flex-wrap:wrap}
+.stats div{padding:14px 22px;border-radius:18px;background:rgba(255,255,255,.1);-webkit-backdrop-filter:blur(16px) saturate(170%);backdrop-filter:blur(16px) saturate(170%);border:1px solid rgba(255,255,255,.26);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 24px rgba(3,10,30,.22)}
+.stats div b{display:block;font:700 2rem var(--serif);color:var(--gold2)}.stats small{color:#cfdbfa}
+@media(max-width:860px){.hero .wrap{grid-template-columns:1fr}.vbox{max-width:380px;margin:auto}.hero::before{left:-40px}.hero::after{right:-60px}}
 
 /* YANGILIKLAR */
 .news{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px}
@@ -128,10 +136,14 @@ nav ul a{color:#dbe4ff;text-decoration:none;font-size:.92rem}nav ul a:hover{colo
 .g span{position:absolute;left:0;right:0;bottom:0;padding:30px 14px 12px;font-size:.85rem;background:linear-gradient(transparent,rgba(10,27,69,.85))}
 .g i{position:absolute;inset:0;display:grid;place-items:center;font-size:.78rem;color:var(--gold2);padding:14px;text-align:center;font-style:normal}
 @media(max-width:860px){.grid{grid-template-columns:repeat(2,1fr)}.g:nth-child(4){grid-column:span 2}}
-#lb{position:fixed;inset:0;background:rgba(5,12,32,.94);display:none;place-items:center;z-index:90;padding:20px}
-#lb.on{display:grid}#lb img{max-width:100%;max-height:85vh;border-radius:12px}
+
+/* RASM KATTALASHTIRISH OYNASI (shisha) */
+#lb{position:fixed;inset:0;background:rgba(5,12,32,.55);-webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%);display:none;place-items:center;z-index:90;padding:20px}
+#lb.on{display:grid}
+#lb img{max-width:100%;max-height:85vh;border-radius:18px;border:1px solid rgba(255,255,255,.25);box-shadow:0 24px 70px rgba(0,0,0,.5)}
 #lb .ph2{color:#fff;max-width:520px;text-align:center}
-#lb button{position:absolute;top:16px;right:20px;font-size:2rem;color:#fff;background:none;border:0}
+#lb button{position:absolute;top:18px;right:20px;width:44px;height:44px;display:grid;place-items:center;border-radius:50%;font-size:1.6rem;line-height:1;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.32);box-shadow:inset 0 1px 0 rgba(255,255,255,.35);cursor:pointer}
+#lb button:hover{background:rgba(255,255,255,.24)}
 
 /* CAMPUS */
 #kampus{background:var(--navy);color:#fff}#kampus h2{color:#fff}#kampus .lead{color:#b9c8f0}
@@ -223,5 +235,36 @@ footer b{color:var(--gold2);font-family:var(--serif);font-size:1.4rem}
 .mini{padding:6px 14px;border-radius:999px;border:1.5px solid var(--head);background:transparent;color:var(--head);font:700 .8rem var(--sans);cursor:pointer}
 .mini:hover{border-color:var(--gold)}
 .mini.del{border-color:#d64545;color:#d64545}
+
+/* LOGIN OYNASI: shisha panel (login.html ga tegmasdan, faqat shu yerdan) */
+body:has(>.box){background:radial-gradient(520px 380px at 82% 10%,rgba(91,134,255,.75),transparent 70%),radial-gradient(480px 360px at 10% 90%,rgba(201,162,74,.65),transparent 70%),linear-gradient(160deg,var(--navy),#0d2566);background-attachment:fixed}
+body .box{--card:rgba(255,255,255,.08);--bg:rgba(255,255,255,.1);--text:#eef2ff;--head:#fff;--mute:#c3cff0;--border:rgba(255,255,255,.28);--accent:#E7C777;--tab-on-bg:#C9A24A;--tab-on-fg:#0A1B45;color-scheme:dark;
+  background:rgba(255,255,255,.12);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);
+  border:1px solid rgba(255,255,255,.3);border-top-color:rgba(255,255,255,.5);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 30px 80px rgba(3,10,30,.45);color:var(--text)}
+.box ::placeholder{color:rgba(225,233,255,.55)}
+.box #msg{color:#ff9c9c}
+.box #msg.ok{color:#7be0a6}
+.box input:-webkit-autofill{-webkit-text-fill-color:#fff;caret-color:#fff;-webkit-box-shadow:0 0 0 40px #1c2f6b inset}
+body #lang.float{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.3);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+
+/* SHISHA EFFEKTI UCHUN ZAXIRA VARIANTLAR */
+@media(max-width:820px){
+  .stats div,.ghost{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .stats div{background:rgba(255,255,255,.14)}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  nav .wrap{background:rgba(10,27,69,.95)}
+  .stats div{background:rgba(255,255,255,.16)}
+  .ghost{background:rgba(255,255,255,.14)}
+  body .box{background:rgba(14,28,70,.92)}
+  #lb{background:rgba(5,12,32,.94)}
+}
+@media(prefers-reduced-transparency:reduce){
+  nav .wrap,.stats div,.ghost,body .box,#lb,body #lang.float{-webkit-backdrop-filter:none;backdrop-filter:none}
+  nav .wrap{background:rgba(10,27,69,.97)}
+  body .box{background:rgba(14,28,70,.95)}
+  #lb{background:rgba(5,12,32,.95)}
+}
 
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
