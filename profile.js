@@ -1,4 +1,5 @@
 import { auth, db } from "./firebase.js";
+import { S } from "./strings.js";
 import {
   onAuthStateChanged, signOut, updateProfile, updatePassword, deleteUser,
   reauthenticateWithCredential, reauthenticateWithPopup, EmailAuthProvider, GoogleAuthProvider
@@ -128,9 +129,12 @@ async function activity() {
   const box = $('#act');
   if (profile.role === 'teacher') {
     const t = await getDoc(doc(db, 'teachers', user.uid));
-    box.innerHTML = t.exists()
-      ? `<p>${T('p.a.t.in')}</p><div class="row"><a class="btn line sm" href="index.html#jamoa">${T('p.a.t.view')}</a></div>`
-      : `<p>${T('p.a.t.out')}</p><div class="row"><a class="btn gold sm" href="index.html#jamoa">${T('p.a.t.join')}</a></div>`;
+    if (t.exists()) {
+      const ok = t.data().approved === true;
+      box.innerHTML = `<p>${ok ? T('p.a.t.in') : S('profPending')}</p><div class="row"><a class="btn line sm" href="index.html#jamoa">${T('p.a.t.view')}</a></div>`;
+    } else {
+      box.innerHTML = `<p>${T('p.a.t.out')}</p><div class="row"><a class="btn gold sm" href="index.html#jamoa">${T('p.a.t.join')}</a></div>`;
+    }
   } else {
     const ps = await getDocs(query(collection(db, 'projects'), where('ownerUid', '==', user.uid)));
     box.innerHTML = `<p>${T('p.a.s.cnt', { n: ps.size })}</p>

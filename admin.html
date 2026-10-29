@@ -44,16 +44,24 @@ tr:last-child td{border-bottom:0}
 .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;font-weight:700;background:var(--chip);color:var(--accent)}
 .pill.ok{background:rgba(46,158,91,.15);color:#2e9e5b}
 .pill.bad{background:rgba(214,69,69,.15);color:#d64545}
+.pill.warn{background:rgba(186,117,23,.18);color:#BA7517}
 .ac{display:flex;gap:6px;flex-wrap:wrap}
 .empty{padding:36px;text-align:center;color:var(--mute);grid-column:1/-1}
 .cards .t .mini{margin-top:14px}
-.af{background:var(--card);border:1px solid var(--border);border-left:6px solid var(--gold);border-radius:20px;padding:24px;display:grid;gap:12px;max-width:640px;margin-bottom:24px}
+.cards .t .ac .mini{margin-top:0}
+.t.pend{border-color:#BA7517}
+.af{background:var(--card);border:1px solid var(--border);border-left:6px solid var(--gold);border-radius:20px;padding:24px;display:grid;gap:12px;max-width:720px;margin-bottom:24px}
 .af h3{font-size:1.25rem;color:var(--head)}
 .af input[type=text],.af textarea{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);color:var(--text);font:500 .95rem var(--sans)}
 .af input[type=file]{color:var(--mute);font-size:.9rem}
-.af textarea{min-height:110px;resize:vertical}
+.af textarea{min-height:90px;resize:vertical}
 .af input:focus,.af textarea:focus{outline:none;border-color:var(--gold)}
 .af .btn{justify-self:start}
+.af .lg{display:grid;gap:8px;padding:14px;border:1px solid var(--border);border-radius:14px}
+.af .lg b{font-size:.85rem;color:var(--head)}
+.af .row2{display:flex;gap:10px;flex-wrap:wrap}
+.avrow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.avrow .av{margin:0}
 .msg{min-height:1.3em;font-size:.88rem;color:#d64545}
 .msg.ok{color:#2e9e5b}
 .thumb{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px;display:block;margin-bottom:12px}
@@ -99,10 +107,10 @@ tr:last-child td{border-bottom:0}
 
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" aria-selected="true" data-t="users">Foydalanuvchilar</button>
+      <button class="tab" role="tab" aria-selected="false" data-t="teachers" id="tabTeachers">O‘qituvchilar</button>
       <button class="tab" role="tab" aria-selected="false" data-t="apps" id="tabApps">Arizalar</button>
       <button class="tab" role="tab" aria-selected="false" data-t="news">Yangiliklar</button>
       <button class="tab" role="tab" aria-selected="false" data-t="gallery">Galereya</button>
-      <button class="tab" role="tab" aria-selected="false" data-t="teachers">O‘qituvchi kartalari</button>
       <button class="tab" role="tab" aria-selected="false" data-t="projects">Loyihalar</button>
     </div>
 
@@ -124,6 +132,48 @@ tr:last-child td{border-bottom:0}
           <tbody id="tb"></tbody>
         </table>
       </div>
+    </section>
+
+    <!-- O'qituvchilar -->
+    <section class="pane" data-p="teachers" hidden>
+      <div class="af" id="seedBox" hidden>
+        <h3>Kod ichidagi o‘qituvchilarni bazaga ko‘chirish</h3>
+        <p style="font-size:.9rem;color:var(--mute)">Saytda oldin kod ichida yozilgan 4 ta o‘qituvchi bor edi. Bir tugma bilan ularni bazaga ko‘chiring: shundan keyin hammasini shu yerdan tahrirlaysiz yoki o‘chirasiz.</p>
+        <button class="btn gold sm" id="seed" type="button">4 ta o‘qituvchini ko‘chirish</button>
+        <div class="msg" id="sm" role="status"></div>
+      </div>
+
+      <form class="af" id="tf" novalidate>
+        <h3 id="tfTitle">Yangi o‘qituvchi qo‘shish</h3>
+        <input type="text" id="tn" maxlength="60" placeholder="Ism va familiya">
+        <div class="avrow">
+          <div class="av" id="tav"></div>
+          <input type="file" id="tfile" accept="image/*">
+          <button class="mini" id="trm" type="button" hidden>Rasmni olib tashlash</button>
+        </div>
+        <div class="lg">
+          <b>O‘zbekcha (majburiy)</b>
+          <input type="text" id="r-uz" maxlength="80" placeholder="Fan va tajriba (masalan: Matematika, 5 yil)">
+          <textarea id="b-uz" maxlength="200" placeholder="Qisqacha tavsif"></textarea>
+        </div>
+        <div class="lg">
+          <b>Ruscha (ixtiyoriy)</b>
+          <input type="text" id="r-ru" maxlength="80" placeholder="Предмет и опыт">
+          <textarea id="b-ru" maxlength="200" placeholder="Краткое описание"></textarea>
+        </div>
+        <div class="lg">
+          <b>Inglizcha (ixtiyoriy)</b>
+          <input type="text" id="r-en" maxlength="80" placeholder="Subject and experience">
+          <textarea id="b-en" maxlength="200" placeholder="Short description"></textarea>
+        </div>
+        <div class="row2">
+          <button class="btn gold sm" type="submit">Saqlash</button>
+          <button class="btn line sm" id="tcancel" type="button" hidden>Bekor qilish</button>
+        </div>
+        <div class="msg" id="tm" role="status"></div>
+      </form>
+
+      <div class="cards" id="tcards"></div>
     </section>
 
     <!-- Qabul arizalari -->
@@ -165,7 +215,6 @@ tr:last-child td{border-bottom:0}
       <div class="gl" id="galList"></div>
     </section>
 
-    <section class="pane" data-p="teachers" hidden><div class="cards" id="tcards"></div></section>
     <section class="pane" data-p="projects" hidden><div class="cards" id="pcards"></div></section>
   </main>
 </div>

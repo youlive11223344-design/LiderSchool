@@ -1,7 +1,8 @@
 import { auth, db } from "./firebase.js";
+import { S } from "./strings.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-  doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, collection, getDocs, query, orderBy, serverTimestamp
+  doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, collection, getDocs, query, where, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const $ = s => document.querySelector(s);
@@ -11,10 +12,17 @@ const initials = n => String(n).trim().split(/\s+/).map(w => w[0]).join('').slic
 const TAGS = ['Robototexnika', 'Dasturlash', 'Ekologiya', 'San’at', 'Fan', 'Boshqa'];
 const tagL = x => ((I18N.get('tags') || {})[x]) || x;
 
+// Admin kiritgan o'qituvchi matnlari: tanlangan tilda bo'lsa o'shani, bo'lmasa o'zbekchasini ko'rsatamiz
+const tx = (t, k) => {
+  const l = I18N.current();
+  return (l !== 'uz' && t.tr && t.tr[l] && t.tr[l][k]) || t[k] || '';
+};
+const ord = t => (typeof t.order === 'number' ? t.order : 1e9);
+
 let user = null, profile = null, isAdmin = false, editing = null; // editing: {type:'teacher'|'project', id}
 let teachers = new Map(), projects = new Map();
 
-// ---------- Profil va admin tugmalari uchun uslub ----------
+// ---------- Profil, admin va "kutilmoqda" belgisi uchun uslub ----------
 document.head.insertAdjacentHTML('beforeend', `<style>
 #authLi a.pbtn{display:flex;align-items:center;gap:8px;padding:4px 16px 4px 4px;background:transparent;border:1.5px solid var(--gold);color:#fff}
 #authLi a.pbtn:hover{background:rgba(201,162,74,.18);transform:none}
@@ -23,6 +31,7 @@ document.head.insertAdjacentHTML('beforeend', `<style>
 .pav{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#0A1B45;display:grid;place-items:center;font:700 .8rem var(--sans);overflow:hidden;flex:none}
 .pav img{width:100%;height:100%;object-fit:cover;display:block}
 .pnm{max-width:110px;overflow:hidden;text-overflow:ellipsis}
+.pend{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:999px;background:rgba(201,162,74,.2);color:#E7C777;font:700 .75rem var(--sans)}
 @media(max-width:820px){.pnm{display:none}#authLi a.pbtn{padding:3px}}
 </style>`);
 
@@ -44,11 +53,18 @@ function paintNav() {
 async function load() {
   try {
     const [ts, ps] = await Promise.all([
-      getDocs(collection(db, 'teachers')),
+      getDocs(query(collection(db, 'teachers'), where('approved', '==', true))),
       getDocs(query(collection(db, 'projects'), orderBy('createdAt', 'desc')))
     ]);
     teachers = new Map(ts.docs.map(d => [d.id, d.data()]));
     projects = new Map(ps.docs.map(d => [d.id, d.data()]));
+    // o'qituvchi o'z (hali tasdiqlanmagan) kartasini ham ko'radi
+    if (user && profile?.role === 'teacher' && !teachers.has(user.uid)) {
+      try {
+        const s = await getDoc(doc(db, 'teachers', user.uid));
+        if (s.exists()) teachers.set(user.uid, s.data());
+      } catch (e) {}
+    }
   } catch (e) { console.warn('Yuklashda xato:', e); }
   render();
 }
@@ -61,11 +77,13 @@ function actions(type, id) {
 function render() {
   document.querySelectorAll('.dyn').forEach(e => e.remove());
 
-  teachers.forEach((t, id) => {
+  [...teachers.entries()].sort((a, b) => ord(a[1]) - ord(b[1])).forEach(([id, t]) => {
     const mine = user && user.uid === id;
     $('#team').insertAdjacentHTML('beforeend',
       `<div class="t dyn"><div class="av">${t.photo ? `<img src="${esc(t.photo)}" alt="${esc(t.n)}">` : esc(initials(t.n))}</div>
-       <h3>${esc(t.n)}</h3><small>${esc(t.r)}</small><p>${esc(t.b)}</p>${mine ? actions('teacher', id) : ''}</div>`);
+       <h3>${esc(t.n)}</h3><small>${esc(tx(t, 'r'))}</small><p>${esc(tx(t, 'b'))}</p>
+       ${t.approved !== true ? `<span class="pend">${esc(S('pending'))}</span>` : ''}
+       ${mine ? actions('teacher', id) : ''}</div>`);
   });
 
   projects.forEach((p, id) => {
@@ -89,10 +107,11 @@ function renderPanel() {
     const own = teachers.get(user.uid);
     const v = (editing?.type === 'teacher' ? own : null) || {};
     P.innerHTML = `<form id="pf" class="pf"><h3>${esc(own ? (editing ? T('m.t.edit') : T('m.t.in')) : T('m.t.add'))}</h3>
-      ${own && !editing ? `<p class="note">${T('m.t.own')}</p>` : `
+      ${own && !editing ? `<p class="note">${T('m.t.own')}</p>${own.approved !== true ? `<p class="note">${esc(S('pendingNote'))}</p>` : ''}` : `
       <input name="r" placeholder="${esc(T('m.t.r.ph'))}" value="${esc(v.r)}" required maxlength="80">
       <textarea name="b" placeholder="${esc(T('m.t.b.ph'))}" required maxlength="200">${esc(v.b || profile.bio)}</textarea>
       <p class="note">${T('m.t.note')}</p>
+      ${!own ? `<p class="note">${esc(S('pendingNote'))}</p>` : ''}
       <button class="btn gold" type="submit">${esc(editing ? T('m.save') : T('m.add'))}</button>
       ${editing ? `<button class="btn line" type="button" id="cancel">${esc(T('m.cancel'))}</button>` : ''}`}
     </form>`;
@@ -113,9 +132,9 @@ function renderPanel() {
     const d = Object.fromEntries(new FormData(f));
     try {
       if (profile.role === 'teacher') {
-        await setDoc(doc(db, 'teachers', user.uid), {
-          uid: user.uid, n: profile.name, r: d.r.trim(), b: d.b.trim(), photo: profile.photo || '', updatedAt: serverTimestamp()
-        });
+        const base = { n: profile.name, r: d.r.trim(), b: d.b.trim(), photo: profile.photo || '', updatedAt: serverTimestamp() };
+        if (teachers.has(user.uid)) await updateDoc(doc(db, 'teachers', user.uid), base);
+        else await setDoc(doc(db, 'teachers', user.uid), { uid: user.uid, approved: false, ...base });
       } else if (editing) {
         await updateDoc(doc(db, 'projects', editing.id), { tag: d.tag, n: d.n.trim(), b: d.b.trim(), ownerUid: user.uid });
       } else {

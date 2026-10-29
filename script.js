@@ -1,6 +1,7 @@
 /* =====================================================
    ✏️ SHU YERDAN TAHRIRLANG (Visual Studio Code'da)
    Matnlar (tarjimalar) i18n.js faylida turadi.
+   O'qituvchilar endi admin paneldan boshqariladi.
    ===================================================== */
 
 // 📍 1) MAKTAB KOORDINATASI (manzil matni i18n.js ichida: 'loc.addr')
@@ -31,15 +32,7 @@ const GALLERY = [
 // 🏫 4) KAMPUS XONALARI (matnlari i18n.js ichida: 'rooms')
 const ROOMS = ['sinf','lab','kutub','zal','it','oshxona'];
 
-// 👩‍🏫 5) O'QITUVCHILAR (ism va rasm; fan/tajriba matni i18n.js ichida: 'team.list', xuddi shu tartibda)
-const TEAM = [
-  {n:"Dostonbek Kulchaboyev",photo:""},
-  {n:"Dilshodbek Ziyadullayev",photo:""},
-  {n:"Maftuna Maxkamova",photo:""},
-  {n:"Jamshid Po'latov",photo:""}
-];
-
-// 🎞️ 6) VIDEOLAR — type: "youtube" (id yozing) yoki "mp4" (fayl yo'li). Nomlari i18n.js ichida: 'vid.list'
+// 🎞️ 5) VIDEOLAR — type: "youtube" (id yozing) yoki "mp4" (fayl yo'li). Nomlari i18n.js ichida: 'vid.list'
 const VIDEOS = [
   {type:"youtube",id:"3hM6AXRFLro"},
   {type:"youtube",id:"j1PtPCJAiZ4"},
@@ -120,13 +113,10 @@ function showRoom(k){
 }
 $$('.room').forEach(r=>{r.onclick=()=>showRoom(r.dataset.k);r.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();showRoom(r.dataset.k)}}});
 
-// Jamoa va loyihalar (statik kartalar .st — foydalanuvchi kartalariga tegmaydi)
+// O'quvchi loyihalari (statik namunalar .st — foydalanuvchi loyihalariga tegmaydi)
 function paintPeople(){
-  $$('#team .st,#proj .st').forEach(e=>e.remove());
-  const tl=T('team.list'), pl=T('proj.list');
-  $('#team').insertAdjacentHTML('afterbegin',TEAM.map((t,i)=>{
-    const x=tl[i]||{r:'',b:''};
-    return `<div class="t st"><div class="av">${t.photo?`<img src="${t.photo}" alt="${t.n}">`:t.n.split(' ').map(w=>w[0]).join('')}</div><h3>${t.n}</h3><small>${x.r}</small><p>${x.b}</p></div>`}).join(''));
+  $$('#proj .st').forEach(e=>e.remove());
+  const pl=T('proj.list');
   $('#proj').insertAdjacentHTML('afterbegin',pl.map(p=>`<div class="t st"><span class="tag">${p.tag}</span><h3>${p.n}</h3><p>${p.b}</p></div>`).join(''));
 }
 $$('.tab').forEach(t=>t.onclick=()=>{$$('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));$('#team').hidden=t.dataset.t!=='team';$('#proj').hidden=t.dataset.t!=='proj'});

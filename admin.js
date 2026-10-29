@@ -1,7 +1,7 @@
 import { auth, db } from "./firebase.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-  doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, collection, serverTimestamp
+  doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, collection, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const $ = s => document.querySelector(s);
@@ -11,11 +11,33 @@ const dt = ts => (ts?.toDate ? ts.toDate() : null);
 const fmt = ts => { const d = dt(ts); return d ? d.toLocaleDateString('uz-UZ') : '—'; };
 const fmtDT = ts => { const d = dt(ts); return d ? d.toLocaleDateString('uz-UZ') + ' ' + d.toLocaleTimeString('uz-UZ', { hour: '2-digit', minute: '2-digit' }) : '—'; };
 const ms = ts => (ts?.toMillis ? ts.toMillis() : 0);
+const ord = t => (typeof t.order === 'number' ? t.order : 1e9);
 const say = (id, t, ok) => { const e = $(id); e.textContent = t; e.className = 'msg' + (ok ? ' ok' : ''); };
 const KIND = { email: 'Email', phone: 'Telefon', google: 'Google' };
 const ST = { new: 'Yangi', seen: 'Ko‘rildi', done: 'Bog‘lanildi' };
 
 let me = null, users = [], teachers = [], projects = [], apps = [], news = [], gallery = [];
+let editingT = null, tPhoto = '';
+
+// ---------- Kod ichida yozilgan 4 ta o'qituvchi (bazaga ko'chirish uchun) ----------
+const SEED = [
+  { id: 'seed-1', n: 'Dostonbek Kulchaboyev',
+    uz: { r: 'Matematika, 15 yil tajriba', b: 'Olimpiada g‘oliblarini tayyorlaydi.' },
+    ru: { r: 'Математика, 15 лет опыта', b: 'Готовит победителей олимпиад.' },
+    en: { r: 'Mathematics, 15 years of experience', b: 'Prepares Olympiad winners.' } },
+  { id: 'seed-2', n: 'Dilshodbek Ziyadullayev',
+    uz: { r: 'Kimyo', b: 'Kimyo to‘garagi rahbari.' },
+    ru: { r: 'Химия', b: 'Руководитель кружка по химии.' },
+    en: { r: 'Chemistry', b: 'Leads the chemistry club.' } },
+  { id: 'seed-3', n: 'Maftuna Maxkamova',
+    uz: { r: 'Ingliz tili (IELTS 7.5)', b: 'Xalqaro sertifikatlarga tayyorlaydi.' },
+    ru: { r: 'Английский язык (IELTS 7.5)', b: 'Готовит к международным сертификатам.' },
+    en: { r: 'English (IELTS 7.5)', b: 'Prepares students for international certificates.' } },
+  { id: 'seed-4', n: 'Jamshid Po‘latov',
+    uz: { r: 'Tarix', b: 'Huquq va Tarix fanlari mutaxasisi' },
+    ru: { r: 'История', b: 'Специалист по праву и истории.' },
+    en: { r: 'History', b: 'Specialist in law and history.' } }
+];
 
 // ---------- Ma'lumotlarni yuklash ----------
 async function loadAll() {
@@ -33,19 +55,22 @@ async function loadAll() {
 // ---------- Chizish ----------
 function renderStats() {
   const newApps = apps.filter(a => a.status === 'new').length;
+  const pendT = teachers.filter(t => t.approved !== true).length;
   const st = [
     ['Foydalanuvchilar', users.length],
-    ['O‘qituvchilar', users.filter(u => u.role === 'teacher').length],
+    ['O‘qituvchilar (rol)', users.filter(u => u.role === 'teacher').length],
     ['O‘quvchilar', users.filter(u => u.role === 'student').length],
+    ['Tasdiq kutayotgan o‘qituvchilar', pendT],
     ['Yangi arizalar', newApps],
     ['Yangiliklar', news.length],
     ['Galereya rasmlari', gallery.length],
-    ['O‘qituvchi kartalari', teachers.length],
+    ['Saytdagi o‘qituvchi kartalari', teachers.filter(t => t.approved === true).length],
     ['Loyihalar', projects.length],
     ['Bloklanganlar', users.filter(u => u.banned).length]
   ];
   $('#stats').innerHTML = st.map(([l, n]) => `<div class="sc"><b>${n}</b><span>${l}</span></div>`).join('');
   $('#tabApps').textContent = newApps ? `Arizalar (${newApps})` : 'Arizalar';
+  $('#tabTeachers').textContent = pendT ? `O‘qituvchilar (${pendT})` : 'O‘qituvchilar';
 }
 
 function renderUsers() {
@@ -107,11 +132,28 @@ function renderGallery() {
 }
 
 function renderTeachers() {
-  $('#tcards').innerHTML = teachers.length ? teachers.map(t => `
-    <div class="t"><div class="av">${t.photo ? `<img src="${esc(t.photo)}" alt="">` : esc(initials(t.n))}</div>
-    <h3>${esc(t.n)}</h3><small>${esc(t.r)}</small><p>${esc(t.b)}</p>
-    <button class="mini del" data-a="dteacher" data-id="${esc(t.id)}">Kartani o‘chirish</button></div>`).join('')
-    : `<div class="empty">Hozircha o‘qituvchi kartalari yo‘q.</div>`;
+  const have = new Set(teachers.map(t => t.id));
+  let seedDone = false;
+  try { seedDone = localStorage.getItem('seedDone') === '1'; } catch (e) {}
+  $('#seedBox').hidden = seedDone || SEED.every(s => have.has(s.id));
+
+  const sorted = [...teachers].sort((a, b) => {
+    const pa = a.approved === true ? 1 : 0, pb = b.approved === true ? 1 : 0;
+    return pa !== pb ? pa - pb : ord(a) - ord(b);
+  });
+  $('#tcards').innerHTML = sorted.length ? sorted.map(t => {
+    const ok = t.approved === true;
+    return `<div class="t ${ok ? '' : 'pend'}">
+      <div class="av">${t.photo ? `<img src="${esc(t.photo)}" alt="">` : esc(initials(t.n))}</div>
+      <h3>${esc(t.n)}</h3><small>${esc(t.r)}</small><p>${esc(t.b)}</p>
+      <p style="margin-top:10px"><span class="pill ${ok ? 'ok' : 'warn'}">${ok ? 'Saytda ko‘rinadi' : 'Tasdiq kutilmoqda'}</span>
+      <span class="pill">${t.uid ? 'Foydalanuvchi qo‘shgan' : 'Admin qo‘shgan'}</span></p>
+      <div class="ac" style="margin-top:12px">
+        <button class="mini" data-a="${ok ? 'unapprove' : 'approve'}" data-id="${esc(t.id)}">${ok ? 'Yashirish' : 'Tasdiqlash'}</button>
+        <button class="mini" data-a="eteacher" data-id="${esc(t.id)}">Tahrirlash</button>
+        <button class="mini del" data-a="dteacher" data-id="${esc(t.id)}">O‘chirish</button>
+      </div></div>`;
+  }).join('') : `<div class="empty">Hozircha o‘qituvchilar yo‘q.</div>`;
 }
 
 function renderProjects() {
@@ -123,7 +165,7 @@ function renderProjects() {
 }
 
 function render() {
-  renderStats(); renderUsers(); renderApps(); renderNews(); renderGallery(); renderTeachers(); renderProjects();
+  renderStats(); renderUsers(); renderTeachers(); renderApps(); renderNews(); renderGallery(); renderProjects();
 }
 
 // ---------- Tablar ----------
@@ -136,7 +178,7 @@ $('#rf').onchange = renderUsers;
 $('#af').onchange = renderApps;
 $('#refresh').onclick = loadAll;
 
-// ---------- Rasmni kichraytirish (JPEG, hajmi 900 KB dan oshmasin) ----------
+// ---------- Rasmni kichraytirish ----------
 function toDataURL(file, max, q) {
   return new Promise((res, rej) => {
     const img = new Image(), url = URL.createObjectURL(file);
@@ -154,6 +196,103 @@ function toDataURL(file, max, q) {
     img.src = url;
   });
 }
+
+function squareImg(file, size) {
+  return new Promise((res, rej) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      const c = document.createElement('canvas'); c.width = c.height = size;
+      const s = Math.min(img.width, img.height);
+      c.getContext('2d').drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, size, size);
+      URL.revokeObjectURL(url);
+      res(c.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = () => rej(new Error('Rasm o‘qilmadi.'));
+    img.src = url;
+  });
+}
+
+// ---------- O'qituvchi formasi ----------
+function paintTPhoto() {
+  $('#tav').innerHTML = tPhoto ? `<img src="${esc(tPhoto)}" alt="">` : esc(initials($('#tn').value || '?'));
+  $('#trm').hidden = !tPhoto;
+}
+function resetTForm() {
+  editingT = null; tPhoto = '';
+  $('#tf').reset();
+  $('#tfTitle').textContent = 'Yangi o‘qituvchi qo‘shish';
+  $('#tcancel').hidden = true;
+  paintTPhoto();
+}
+function fillTForm(t) {
+  editingT = t.id; tPhoto = t.photo || '';
+  $('#tn').value = t.n || '';
+  $('#r-uz').value = t.r || ''; $('#b-uz').value = t.b || '';
+  ['ru', 'en'].forEach(l => {
+    $('#r-' + l).value = (t.tr && t.tr[l] && t.tr[l].r) || '';
+    $('#b-' + l).value = (t.tr && t.tr[l] && t.tr[l].b) || '';
+  });
+  $('#tfTitle').textContent = 'O‘qituvchini tahrirlash';
+  $('#tcancel').hidden = false;
+  say('#tm', '');
+  paintTPhoto();
+  $('#tf').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+$('#tn').oninput = () => { if (!tPhoto) paintTPhoto(); };
+$('#tcancel').onclick = () => { resetTForm(); say('#tm', ''); };
+$('#trm').onclick = () => { tPhoto = ''; paintTPhoto(); };
+$('#tfile').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try { tPhoto = await squareImg(f, 256); paintTPhoto(); say('#tm', ''); }
+  catch (err) { say('#tm', err.message); }
+};
+
+$('#tf').onsubmit = async e => {
+  e.preventDefault();
+  const n = $('#tn').value.trim(), r = $('#r-uz').value.trim(), b = $('#b-uz').value.trim();
+  if (n.length < 2) return say('#tm', 'Ism va familiyani kiriting.');
+  if (r.length < 2) return say('#tm', 'O‘zbekcha fan va tajribani kiriting (majburiy).');
+  const tr = {};
+  ['ru', 'en'].forEach(l => {
+    const rr = $('#r-' + l).value.trim(), bb = $('#b-' + l).value.trim();
+    if (rr || bb) tr[l] = { r: rr, b: bb };
+  });
+  try {
+    say('#tm', 'Saqlanmoqda…', true);
+    const data = { n, r, b, photo: tPhoto, tr, updatedAt: serverTimestamp() };
+    if (editingT) {
+      await updateDoc(doc(db, 'teachers', editingT), data);
+    } else {
+      const max = teachers.reduce((m, t) => Math.max(m, typeof t.order === 'number' ? t.order : 0), 0);
+      await addDoc(collection(db, 'teachers'), { ...data, approved: true, source: 'admin', order: max + 1, createdAt: serverTimestamp() });
+    }
+    resetTForm();
+    say('#tm', 'Saqlandi.', true);
+    await loadAll();
+  } catch (err) { say('#tm', err.code || err.message); }
+};
+
+// ---------- 4 ta o'qituvchini bazaga ko'chirish ----------
+$('#seed').onclick = async () => {
+  try {
+    say('#sm', 'Ko‘chirilmoqda…', true);
+    const have = new Set(teachers.map(t => t.id));
+    let k = 0;
+    for (let i = 0; i < SEED.length; i++) {
+      const s = SEED[i];
+      if (have.has(s.id)) continue;
+      await setDoc(doc(db, 'teachers', s.id), {
+        n: s.n, r: s.uz.r, b: s.uz.b, photo: '', tr: { ru: s.ru, en: s.en },
+        approved: true, source: 'seed', order: i + 1, createdAt: serverTimestamp()
+      });
+      k++;
+    }
+    try { localStorage.setItem('seedDone', '1'); } catch (err) {}
+    say('#sm', k + ' ta o‘qituvchi ko‘chirildi.', true);
+    await loadAll();
+  } catch (err) { say('#sm', err.code || err.message); }
+};
 
 // ---------- Yangilik qo'shish ----------
 $('#nf').onsubmit = async e => {
@@ -205,8 +344,16 @@ $('#app').addEventListener('click', async e => {
       if (teachers.some(t => t.id === id)) await deleteDoc(doc(db, 'teachers', id));
       await deleteDoc(doc(db, 'users', id));
       await loadAll();
+    } else if (a === 'approve' || a === 'unapprove') {
+      await updateDoc(doc(db, 'teachers', id), { approved: a === 'approve' });
+      const t = teachers.find(x => x.id === id); if (t) t.approved = a === 'approve';
+      render();
+    } else if (a === 'eteacher') {
+      const t = teachers.find(x => x.id === id);
+      if (t) fillTForm(t);
     } else if (a === 'dteacher') {
       if (!confirm('Bu o‘qituvchi kartasi o‘chirilsinmi?')) return;
+      if (editingT === id) resetTForm();
       await deleteDoc(doc(db, 'teachers', id)); await loadAll();
     } else if (a === 'dproj') {
       if (!confirm('Bu loyiha o‘chirilsinmi?')) return;
@@ -264,5 +411,6 @@ onAuthStateChanged(auth, async u => {
   me = u;
   $('#who').textContent = u.displayName || u.email || '';
   $('#app').hidden = false;
+  paintTPhoto();
   await loadAll();
 });
